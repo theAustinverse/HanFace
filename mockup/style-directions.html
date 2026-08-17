@@ -1,0 +1,864 @@
+<title>藕色的三種濃度</title>
+<style>
+  /* ============================================================
+     頁面外殼 (chrome) — 中性暖白，帶極輕微的玫瑰偏色以呼應主題
+     ============================================================ */
+  :root {
+    --c-ground:  #FBF9F8;
+    --c-surface: #F5F1EF;
+    --c-sunken:  #EFEAE7;
+    --c-line:    #E7DFDB;
+    --c-line-strong: #D5C9C3;
+    --c-ink:     #2B2422;
+    --c-ink-soft:#4A403C;
+    --c-muted:   #766B67;
+    --c-mark:    #8A6357;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti TC", "Noto Serif TC", "Source Han Serif TC", Georgia, serif;
+    --sans: "PingFang TC", "Hiragino Sans TC", "Noto Sans TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --page: 1120px;
+    --read: 62ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-ground:  #161312;
+      --c-surface: #1E1A19;
+      --c-sunken:  #241F1D;
+      --c-line:    #322B28;
+      --c-line-strong: #473D39;
+      --c-ink:     #EDE7E4;
+      --c-ink-soft:#D3C9C4;
+      --c-muted:   #9C8F8A;
+      --c-mark:    #D8A99A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-ground:  #161312;
+    --c-surface: #1E1A19;
+    --c-sunken:  #241F1D;
+    --c-line:    #322B28;
+    --c-line-strong: #473D39;
+    --c-ink:     #EDE7E4;
+    --c-ink-soft:#D3C9C4;
+    --c-muted:   #9C8F8A;
+    --c-mark:    #D8A99A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--c-ground);
+    color: var(--c-ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "palt" 1;
+  }
+
+  .wrap { max-width: var(--page); margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- 通用排版 ---------- */
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    font-weight: 500;
+  }
+  h1, h2, h3 { text-wrap: balance; margin: 0; font-weight: 400; }
+  h1 { font-family: var(--serif); font-size: clamp(34px, 6vw, 58px); line-height: 1.14; letter-spacing: -.01em; }
+  h2 { font-family: var(--serif); font-size: clamp(23px, 3.2vw, 31px); line-height: 1.28; }
+  h3 { font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+  p { margin: 0; max-width: var(--read); }
+  a { color: var(--c-mark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--c-mark); outline-offset: 3px; border-radius: 2px; }
+
+  code, .hex { font-family: var(--mono); font-size: .86em; letter-spacing: .01em; }
+
+  /* ---------- 區塊節奏 ---------- */
+  .band { padding: 76px 0; border-top: 1px solid var(--c-line); }
+  .band:first-of-type { border-top: 0; }
+  .band > .wrap > * + * { margin-top: 26px; }
+  .band-head { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ============================================================
+     頁首
+     ============================================================ */
+  .masthead { padding: 76px 0 40px; }
+  .masthead .wrap { display: flex; flex-direction: column; gap: 22px; }
+  .masthead p { color: var(--c-ink-soft); font-size: 17px; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px 26px;
+    font-size: 12.5px; color: var(--c-muted);
+    padding-top: 8px; border-top: 1px solid var(--c-line);
+  }
+  .meta-row b { color: var(--c-ink-soft); font-weight: 600; }
+
+  .callout {
+    border-left: 2px solid var(--c-line-strong);
+    padding: 4px 0 4px 20px;
+    color: var(--c-ink-soft);
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--c-ink); }
+
+  /* ============================================================
+     配色切換器
+     ============================================================ */
+  .switcher {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--c-ground) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-top: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .switcher .wrap { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 13px; padding-bottom: 13px; }
+  .switcher .eyebrow { flex: 0 0 auto; }
+  .pal-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pal-tab {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 15px 8px 11px;
+    background: transparent;
+    border: 1px solid var(--c-line-strong);
+    border-radius: 999px;
+    font-family: inherit; font-size: 13.5px; color: var(--c-ink-soft);
+    cursor: pointer;
+    transition: border-color .18s ease, color .18s ease, background .18s ease;
+  }
+  .pal-tab:hover { border-color: var(--c-ink-soft); }
+  .pal-tab[aria-pressed="true"] { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-ground); }
+  .pal-tab .dot { width: 15px; height: 15px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .16); flex: 0 0 auto; }
+  .pal-tab .zh { font-family: var(--serif); font-size: 16px; }
+
+  /* ============================================================
+     預覽畫布 — 內部固定為「淺色網站」的樣貌，不隨深色模式反轉，
+     因為這正是品牌實際要呈現的白底設計。
+     ============================================================ */
+  /* 兩個預覽容器（桌機畫布與手機框）共用同一組品牌色變數 */
+  .canvas, .phone-screen {
+    --p-ground:#FDF9F7; --p-surface:#F6E7E1; --p-line:#EAD3CB;
+    --p-ink:#3D2E2B; --p-muted:#856B65; --p-blush:#E2B4A6; --p-deep:#96594C;
+  }
+
+  .canvas {
+    background: var(--p-ground);
+    color: var(--p-ink);
+    border: 1px solid var(--c-line-strong);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: background .45s ease, color .45s ease;
+  }
+  [data-pal="mist"] {
+    --p-ground:#FCFAF9; --p-surface:#F4EEEB; --p-line:#E4D9D4;
+    --p-ink:#332C2A; --p-muted:#7A6C67; --p-blush:#DCC5BF; --p-deep:#8A6357;
+  }
+  [data-pal="lotus"] {
+    --p-ground:#FDF9F7; --p-surface:#F6E7E1; --p-line:#EAD3CB;
+    --p-ink:#3D2E2B; --p-muted:#856B65; --p-blush:#E2B4A6; --p-deep:#96594C;
+  }
+  [data-pal="rosewood"] {
+    --p-ground:#FAF6F5; --p-surface:#EFE0DE; --p-line:#DFC9C7;
+    --p-ink:#2E2427; --p-muted:#6E5559; --p-blush:#C99A9C; --p-deep:#834F54;
+  }
+
+  .canvas-label {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding: 10px 20px;
+    background: var(--c-sunken); color: var(--c-muted);
+    border-bottom: 1px solid var(--c-line);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .canvas-label span:last-child { letter-spacing: .04em; text-transform: none; }
+
+  /* 照片佔位塊 */
+  .ph {
+    position: relative;
+    background:
+      linear-gradient(152deg, var(--p-ground) 0%, var(--p-surface) 42%, var(--p-blush) 100%);
+    display: grid; place-items: center;
+    overflow: hidden;
+    transition: background .45s ease;
+  }
+  .ph::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: .11; mix-blend-mode: multiply; pointer-events: none;
+  }
+  .ph > em {
+    position: relative; z-index: 1;
+    font-style: normal; font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--p-ink); opacity: .5; text-align: center; padding: 0 14px; line-height: 1.9;
+  }
+
+  /* ---------- 預覽：主視覺 ---------- */
+  .m-nav {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    padding: 22px 40px; border-bottom: 1px solid var(--p-line);
+  }
+  .m-wordmark { font-family: var(--serif); font-size: 21px; letter-spacing: .18em; }
+  .m-nav ul { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--p-muted); }
+  .m-hero { display: grid; grid-template-columns: 1.02fr .98fr; align-items: stretch; }
+  .m-hero-copy { padding: 66px 40px 62px; display: flex; flex-direction: column; gap: 20px; align-self: center; }
+  .m-hero-copy .eyebrow { color: var(--p-muted); }
+  .m-hero h2 { color: var(--p-ink); font-size: clamp(26px, 3.4vw, 40px); line-height: 1.3; }
+  .m-hero p { color: var(--p-muted); font-size: 14.5px; max-width: 34ch; }
+  .m-hero .ph { min-height: 400px; }
+  .m-btns { display: flex; gap: 11px; flex-wrap: wrap; margin-top: 6px; }
+
+  .btn {
+    font-family: inherit; font-size: 13.5px; letter-spacing: .06em;
+    padding: 13px 27px; border-radius: 999px; cursor: pointer;
+    border: 1px solid transparent; transition: opacity .18s ease, background .3s ease;
+  }
+  .btn-solid { background: var(--p-deep); color: #FFFFFF; }
+  .btn-solid:hover { opacity: .87; }
+  .btn-ghost { background: transparent; color: var(--p-ink); border-color: var(--p-ink); }
+  .btn-ghost:hover { background: var(--p-surface); }
+
+  /* ---------- 預覽：服務卡 ---------- */
+  .m-sec { padding: 62px 40px; border-top: 1px solid var(--p-line); }
+  .m-sec-head { display: flex; flex-direction: column; gap: 9px; margin-bottom: 32px; }
+  .m-sec-head .eyebrow { color: var(--p-muted); }
+  .m-sec-head h3 { font-family: var(--serif); font-size: 25px; font-weight: 400; }
+  .m-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .m-card { display: flex; flex-direction: column; gap: 13px; }
+  .m-card .ph { aspect-ratio: 4/5; }
+  .m-card h4 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .m-card p { font-size: 13px; color: var(--p-muted); line-height: 1.8; }
+  .m-price {
+    font-family: var(--mono); font-size: 12.5px; color: var(--p-ink);
+    font-variant-numeric: tabular-nums;
+    padding-top: 10px; border-top: 1px solid var(--p-line); margin-top: auto;
+  }
+
+  /* ---------- 預覽：見證 ---------- */
+  .m-quote { background: var(--p-surface); padding: 66px 40px; text-align: center; transition: background .45s ease; }
+  .m-quote blockquote {
+    margin: 0 auto; max-width: 46ch;
+    font-family: var(--serif); font-size: clamp(18px, 2.4vw, 25px); line-height: 1.62;
+  }
+  .m-quote cite { display: block; margin-top: 20px; font-size: 11.5px; font-style: normal; letter-spacing: .16em; text-transform: uppercase; color: var(--p-muted); }
+
+  /* ---------- 預覽：CTA 帶 ---------- */
+  .m-cta { background: var(--p-deep); color: #FFFFFF; padding: 56px 40px; display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap; transition: background .45s ease; }
+  .m-cta h3 { font-family: var(--serif); font-size: 26px; font-weight: 400; }
+  .m-cta p { font-size: 13.5px; opacity: .82; margin-top: 7px; }
+  .m-cta .btn { background: #FFFFFF; color: var(--p-deep); }
+
+  /* ---------- 預覽：元件庫 ---------- */
+  .m-kit { padding: 52px 40px; border-top: 1px solid var(--p-line); display: grid; gap: 30px; }
+  .kit-row { display: flex; flex-direction: column; gap: 13px; }
+  .kit-row > .eyebrow { color: var(--p-muted); }
+  .kit-items { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .chip { font-size: 11.5px; letter-spacing: .1em; padding: 6px 14px; border-radius: 999px; background: var(--p-surface); color: var(--p-ink); border: 1px solid var(--p-line); }
+  .chip-solid { background: var(--p-blush); border-color: transparent; }
+  .field { display: flex; flex-direction: column; gap: 7px; max-width: 320px; width: 100%; }
+  .field label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--p-muted); }
+  .field input {
+    font-family: inherit; font-size: 14px; padding: 12px 14px;
+    background: transparent; color: var(--p-ink);
+    border: 1px solid var(--p-line); border-radius: 2px;
+  }
+  .field input::placeholder { color: var(--p-muted); opacity: .7; }
+  .swatch-strip { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--p-line); border-radius: 2px; overflow: hidden; }
+  .swatch-strip div { flex: 1 1 84px; height: 62px; }
+
+  /* ---------- 預覽：手機視圖 ---------- */
+  .phone-zone { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; }
+  .phone {
+    width: 300px; border: 1px solid var(--c-line-strong); border-radius: 26px;
+    padding: 9px; background: var(--c-sunken); flex: 0 0 auto;
+  }
+  .phone-screen {
+    border-radius: 19px; overflow: hidden;
+    background: var(--p-ground); color: var(--p-ink);
+    display: flex; flex-direction: column;
+    transition: background .45s ease, color .45s ease;
+  }
+  .phone-screen .ph { height: 168px; }
+  .ph-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 17px; border-bottom: 1px solid var(--p-line); }
+  .ph-nav .m-wordmark { font-size: 15px; }
+  .ph-nav small { font-size: 17px; color: var(--p-muted); }
+  .ph-body { padding: 22px 17px 26px; display: flex; flex-direction: column; gap: 13px; }
+  .ph-body .eyebrow { color: var(--p-muted); font-size: 9.5px; }
+  .ph-body h4 { margin: 0; font-family: var(--serif); font-size: 21px; font-weight: 400; line-height: 1.36; }
+  .ph-body p { font-size: 12.5px; color: var(--p-muted); line-height: 1.75; }
+  .ph-body .btn { width: 100%; padding: 12px; font-size: 13px; }
+  .ph-note { display: flex; flex-direction: column; gap: 14px; }
+  .ph-note li { font-size: 14px; color: var(--c-ink-soft); }
+
+  /* ============================================================
+     色票資料
+     ============================================================ */
+  .tokens { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 14px; }
+  .token { border: 1px solid var(--c-line); border-radius: 2px; overflow: hidden; background: var(--c-surface); }
+  .token .chip-area { height: 76px; border-bottom: 1px solid var(--c-line); }
+  .token .token-meta { padding: 11px 13px 13px; display: flex; flex-direction: column; gap: 3px; }
+  .token .token-role { font-size: 12.5px; font-weight: 600; color: var(--c-ink); }
+  .token .token-hex { font-family: var(--mono); font-size: 11.5px; color: var(--c-muted); text-transform: uppercase; }
+  .token .token-use { font-size: 11.5px; color: var(--c-muted); line-height: 1.6; }
+
+  .scroller { overflow-x: auto; border: 1px solid var(--c-line); border-radius: 2px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 620px; }
+  caption { text-align: left; padding: 14px 16px; font-size: 12.5px; color: var(--c-muted); border-bottom: 1px solid var(--c-line); background: var(--c-surface); }
+  th, td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--c-line); vertical-align: top; }
+  th { font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--c-muted); font-weight: 600; background: var(--c-surface); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pass { color: #2F6B4F; font-weight: 600; }
+  .fail { color: #A4402F; font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .pass { color: #7FC29B; }
+    :root:not([data-theme="light"]) .fail { color: #E8998A; }
+  }
+  :root[data-theme="dark"] .pass { color: #7FC29B; }
+  :root[data-theme="dark"] .fail { color: #E8998A; }
+
+  /* ============================================================
+     三方向性格比較
+     ============================================================ */
+  .compare { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .dir {
+    border: 1px solid var(--c-line); border-radius: 2px;
+    display: flex; flex-direction: column;
+    background: var(--c-surface);
+  }
+  .dir-strip { height: 8px; display: flex; }
+  .dir-strip i { flex: 1; }
+  .dir-body { padding: 22px 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .dir-name { display: flex; align-items: baseline; gap: 10px; }
+  .dir-name .zh { font-family: var(--serif); font-size: 27px; }
+  .dir-name .en { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--c-muted); }
+  .dir dl { margin: 0; display: flex; flex-direction: column; gap: 11px; }
+  .dir dt { font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--c-muted); margin-bottom: 3px; }
+  .dir dd { margin: 0; font-size: 13.5px; line-height: 1.72; color: var(--c-ink-soft); }
+
+  /* ============================================================
+     清單
+     ============================================================ */
+  .stack { display: flex; flex-direction: column; gap: 18px; }
+  ul.plain, ol.plain { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 11px; }
+  ul.plain li, ol.plain li { max-width: var(--read); line-height: 1.78; }
+  ul.plain li::marker { color: var(--c-line-strong); }
+  ol.plain li::marker { color: var(--c-muted); font-size: .88em; }
+
+  .qa { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--c-line); }
+  .qa > div { padding: 20px 0; border-bottom: 1px solid var(--c-line); display: grid; grid-template-columns: 78px 1fr; gap: 22px; align-items: start; }
+  .qa .qnum { font-family: var(--mono); font-size: 11.5px; color: var(--c-muted); letter-spacing: .1em; padding-top: 4px; }
+  .qa .qbody { display: flex; flex-direction: column; gap: 7px; }
+  .qa .qtext { font-size: 15.5px; color: var(--c-ink); font-weight: 500; max-width: var(--read); }
+  .qa .qwhy { font-size: 13.5px; color: var(--c-muted); max-width: var(--read); }
+
+  footer { padding: 54px 0 78px; border-top: 1px solid var(--c-line); }
+  footer .wrap { display: flex; flex-direction: column; gap: 10px; }
+  footer p { font-size: 13px; color: var(--c-muted); }
+
+  /* ============================================================
+     響應式
+     ============================================================ */
+  @media (max-width: 900px) {
+    .m-hero { grid-template-columns: 1fr; }
+    .m-hero .ph { min-height: 260px; order: -1; }
+    .m-cards { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    .phone-zone { grid-template-columns: 1fr; justify-items: center; }
+    .ph-note { justify-self: stretch; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 18px; }
+    .band { padding: 54px 0; }
+    .m-nav { padding: 18px 22px; }
+    .m-nav ul { display: none; }
+    .m-hero-copy, .m-sec, .m-quote, .m-cta, .m-kit { padding-left: 22px; padding-right: 22px; }
+    .qa > div { grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">HanFace 官網 · 視覺方向樣稿 01</p>
+    <h1>藕色的三種濃度</h1>
+    <p>「藕色系＋白」這個方向是對的，但藕色的範圍很寬 —— 從幾乎看不出顏色的淺灰粉，到帶著沉穩感的乾燥玫瑰，質感差異比想像中大。與其用形容詞討論，不如把三種濃度套進同一份首頁版型，直接看差別。</p>
+    <p class="callout"><strong>怎麼用這一頁：</strong>按下方的「霧／藕／檀」切換配色，整個預覽區會即時換色。挑出你的第一直覺，再往下看每組配色的性格與風險說明。不用一次決定 —— 告訴我你偏向哪一個、哪裡不對，我再調。</p>
+    <div class="meta-row">
+      <span><b>版型</b>示意用，非定稿</span>
+      <span><b>文案</b>全部是佔位文字</span>
+      <span><b>照片</b>色塊佔位，見下方攝影方向</span>
+      <span><b>字體</b>系統字，非最終選擇</span>
+    </div>
+  </div>
+</header>
+
+<div class="switcher">
+  <div class="wrap">
+    <span class="eyebrow">切換配色</span>
+    <div class="pal-tabs" role="group" aria-label="選擇配色方向">
+      <button class="pal-tab" type="button" data-set="mist" aria-pressed="false">
+        <span class="dot" style="background:#DCC5BF"></span><span class="zh">霧</span>
+      </button>
+      <button class="pal-tab" type="button" data-set="lotus" aria-pressed="true">
+        <span class="dot" style="background:#E2B4A6"></span><span class="zh">藕</span>
+      </button>
+      <button class="pal-tab" type="button" data-set="rosewood" aria-pressed="false">
+        <span class="dot" style="background:#C99A9C"></span><span class="zh">檀</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 預覽畫布 ================= -->
+<section class="band" style="padding-top:44px">
+  <div class="wrap">
+    <div class="canvas" id="canvas" data-pal="lotus">
+      <div class="canvas-label">
+        <span>首頁示意 · 桌機</span>
+        <span id="palName">方向二　藕　Lotus</span>
+      </div>
+
+      <nav class="m-nav">
+        <span class="m-wordmark">HANFACE</span>
+        <ul>
+          <li>關於</li><li>服務項目</li><li>保養知識</li><li>預約</li>
+        </ul>
+      </nav>
+
+      <div class="m-hero">
+        <div class="m-hero-copy">
+          <span class="eyebrow">佔位文案 · 待法規確認</span>
+          <h2>讓肌膚回到<br>它原本的樣子</h2>
+          <p>以韓式肌膚管理為核心的酸類保養，一次只服務一位客人。（這段文字純屬示意，實際文案須依營業身分做合規調整。）</p>
+          <div class="m-btns">
+            <button class="btn btn-solid" type="button">預約諮詢</button>
+            <button class="btn btn-ghost" type="button">查看服務項目</button>
+          </div>
+        </div>
+        <div class="ph"><em>主視覺照片<br>橫式 · 空間或情境</em></div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-sec-head">
+          <span class="eyebrow">Services</span>
+          <h3>服務項目</h3>
+        </div>
+        <div class="m-cards">
+          <article class="m-card">
+            <div class="ph"><em>療程照 4:5</em></div>
+            <h4>杏仁酸保養</h4>
+            <p>適合毛孔與粉刺困擾的肌膚，溫和不刺激，初次接觸酸類保養的入門選擇。</p>
+            <div class="m-price">60 分鐘　NT$1,800</div>
+          </article>
+          <article class="m-card">
+            <div class="ph"><em>療程照 4:5</em></div>
+            <h4>複合酸保養</h4>
+            <p>依當日膚況調配比例，處理暗沉與粗糙感，適合已有酸類使用經驗者。</p>
+            <div class="m-price">75 分鐘　NT$2,400</div>
+          </article>
+          <article class="m-card">
+            <div class="ph"><em>療程照 4:5</em></div>
+            <h4>舒緩保濕護理</h4>
+            <p>不含酸類的基礎保養，適合換季敏弱期，或酸類保養之間的修養週。</p>
+            <div class="m-price">60 分鐘　NT$1,500</div>
+          </article>
+        </div>
+      </div>
+
+      <div class="m-quote">
+        <blockquote>「第一次來的時候很緊張，她花了快二十分鐘只是看我的皮膚、問我平常用什麼。」</blockquote>
+        <cite>示意內容 · 實際見證須確認法規與客人授權</cite>
+      </div>
+
+      <div class="m-cta">
+        <div>
+          <h3>預約你的第一次諮詢</h3>
+          <p>初次到訪含 20 分鐘肌膚諮詢</p>
+        </div>
+        <button class="btn" type="button">加 LINE 預約</button>
+      </div>
+
+      <div class="m-kit">
+        <div class="kit-row">
+          <span class="eyebrow">按鈕</span>
+          <div class="kit-items">
+            <button class="btn btn-solid" type="button">主要動作</button>
+            <button class="btn btn-ghost" type="button">次要動作</button>
+          </div>
+        </div>
+        <div class="kit-row">
+          <span class="eyebrow">標籤</span>
+          <div class="kit-items">
+            <span class="chip">敏弱肌適用</span>
+            <span class="chip">初次體驗</span>
+            <span class="chip chip-solid">熱門</span>
+          </div>
+        </div>
+        <div class="kit-row">
+          <span class="eyebrow">表單欄位</span>
+          <div class="field">
+            <label for="demoName">姓名</label>
+            <input id="demoName" type="text" placeholder="請輸入你的姓名" autocomplete="off">
+          </div>
+        </div>
+        <div class="kit-row">
+          <span class="eyebrow">完整色階</span>
+          <div class="swatch-strip" id="strip"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 手機視圖 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">同一組配色 · 手機</span>
+      <h2>真正要顧好的是這一屏</h2>
+      <p>如果流量主要來自 Instagram 個人檔案的連結，絕大多數訪客只會看到這個畫面就決定去留。桌機版比較好看，但手機版才是實際會被看的版本。</p>
+    </div>
+    <div class="phone-zone">
+      <div class="phone">
+        <div class="phone-screen" id="phoneScreen" data-pal="lotus">
+          <div class="ph-nav">
+            <span class="m-wordmark">HANFACE</span>
+            <small>☰</small>
+          </div>
+          <div class="ph"><em>主視覺</em></div>
+          <div class="ph-body">
+            <span class="eyebrow">台北 · 韓式肌膚管理</span>
+            <h4>讓肌膚回到它原本的樣子</h4>
+            <p>一次只服務一位客人，初次到訪含 20 分鐘肌膚諮詢。</p>
+            <button class="btn btn-solid" type="button">加 LINE 預約</button>
+            <button class="btn btn-ghost" type="button">查看服務與價格</button>
+          </div>
+        </div>
+      </div>
+      <div class="ph-note">
+        <h3>這一屏必須同時回答四件事</h3>
+        <ul class="plain">
+          <li><strong>這是什麼？</strong>「韓式肌膚管理」比「HanFace」本身重要 —— 品牌名對新客不具意義。</li>
+          <li><strong>在哪裡？</strong>服務型生意，客人第一個問題永遠是地點。放在第一屏能省下大量重複詢問。</li>
+          <li><strong>要我做什麼？</strong>一顆最主要的按鈕。兩顆以上會稀釋決策，第二顆只能是輔助。</li>
+          <li><strong>值得信任嗎？</strong>這件事靠照片，不靠文字。所以主視覺那張照片的品質，決定了整個網站的成敗。</li>
+        </ul>
+        <p class="callout">首屏最常見的錯誤是「一張大圖壓一行看不清楚的白字，然後沒有按鈕」。第二常見的是沒寫地點。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 色票 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">Tokens</span>
+      <h2>目前選擇的色票</h2>
+      <p>切換上方配色時這一區也會跟著更新。每個顏色都有明確的用途 —— 顏色系統的重點不是「有幾個顏色」，而是「每個顏色只做一件事」，這樣網站放大到十幾個頁面時才不會走鐘。</p>
+    </div>
+    <div class="tokens" id="tokens"></div>
+  </div>
+</section>
+
+<!-- ================= 對比度 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">Accessibility</span>
+      <h2>一個實測出來的重要限制</h2>
+      <p>我把三組配色都跑過 WCAG 對比度計算，結果值得你知道：<strong>漂亮的淺藕色不能用在文字和按鈕上。</strong>淺藕色配白字的對比度只有 1.6–2.5:1，遠低於 4.5:1 的無障礙標準 —— 在戶外用手機看，字幾乎會消失在底色裡。</p>
+      <p>解法不是放棄藕色，而是每組配色都要有兩個層次：<strong>淺藕色負責氣質</strong>（大面積背景、色塊、裝飾），<strong>深藕色負責功能</strong>（按鈕、連結、需要被讀到的字）。這也是韓系品牌實際的做法 —— 看起來很淡，但按鈕其實都比你以為的深。</p>
+    </div>
+    <div class="scroller">
+      <table>
+        <caption>白字疊在藕色上的對比度實測。標準：一般文字需 ≥ 4.5:1（WCAG AA）</caption>
+        <thead>
+          <tr><th>配色方向</th><th>淺藕色</th><th class="num">白字對比</th><th>判定</th><th>深藕色</th><th class="num">白字對比</th><th>判定</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>一　霧</td>
+            <td class="num">#DCC5BF</td><td class="num">1.64:1</td><td class="fail">不可用於文字</td>
+            <td class="num">#8A6357</td><td class="num">5.25:1</td><td class="pass">AA 通過</td>
+          </tr>
+          <tr>
+            <td>二　藕</td>
+            <td class="num">#E2B4A6</td><td class="num">1.86:1</td><td class="fail">不可用於文字</td>
+            <td class="num">#96594C</td><td class="num">5.48:1</td><td class="pass">AA 通過</td>
+          </tr>
+          <tr>
+            <td>三　檀</td>
+            <td class="num">#C99A9C</td><td class="num">2.45:1</td><td class="fail">不可用於文字</td>
+            <td class="num">#834F54</td><td class="num">6.54:1</td><td class="pass">AA 通過</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="callout">為什麼在乎這個：你的客群是 25–40 歲，其中不少人已經開始需要老花眼鏡，而且大多在通勤、走路、光線很亂的環境下用手機看你的網站。對比度不是為了合規，是為了她真的看得到「預約」兩個字在哪。</p>
+  </div>
+</section>
+
+<!-- ================= 三方向性格 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">Directions</span>
+      <h2>三個方向各自的性格與風險</h2>
+      <p>沒有哪一個比較好，只有哪一個比較像你。我對每一個都寫了「風險」，因為那通常比優點更能幫你決定。</p>
+    </div>
+    <div class="compare">
+      <article class="dir">
+        <div class="dir-strip"><i style="background:#FCFAF9"></i><i style="background:#F4EEEB"></i><i style="background:#DCC5BF"></i><i style="background:#8A6357"></i><i style="background:#332C2A"></i></div>
+        <div class="dir-body">
+          <div class="dir-name"><span class="zh">霧</span><span class="en">Mist</span></div>
+          <dl>
+            <div><dt>性格</dt><dd>最接近「乾淨純淨」的字面意思。顏色幾乎退到背景裡，第一眼看到的是留白與照片，而不是顏色。</dd></div>
+            <div><dt>適合</dt><dd>你想被認為專業、克制、有醫療感的可信度；也最接近日韓極簡保養品牌的調性。</dd></div>
+            <div><dt>風險</dt><dd><strong>非常吃照片。</strong>顏色沒在幫忙撐場面，照片一鬆散，整個網站會從「純淨」變成「空白」。素材不夠的話別選這個。</dd></div>
+          </dl>
+        </div>
+      </article>
+      <article class="dir">
+        <div class="dir-strip"><i style="background:#FDF9F7"></i><i style="background:#F6E7E1"></i><i style="background:#E2B4A6"></i><i style="background:#96594C"></i><i style="background:#3D2E2B"></i></div>
+        <div class="dir-body">
+          <div class="dir-name"><span class="zh">藕</span><span class="en">Lotus</span></div>
+          <dl>
+            <div><dt>性格</dt><dd>最標準的藕色印象，暖、柔、有明確的女性感但不甜。溫度最高的一組，最像「有人在照顧你」。</dd></div>
+            <div><dt>適合</dt><dd>個人品牌、以你本人的專業與手感為賣點；服務體驗的溫度是你的差異化來源。</dd></div>
+            <div><dt>風險</dt><dd>暖粉色最容易掉進「甜美少女」的區間。<strong>要靠壓低飽和度、放大留白、字體不要選圓體來拉回成熟度。</strong>也最不適合男性客人。</dd></div>
+          </dl>
+        </div>
+      </article>
+      <article class="dir">
+        <div class="dir-strip"><i style="background:#FAF6F5"></i><i style="background:#EFE0DE"></i><i style="background:#C99A9C"></i><i style="background:#834F54"></i><i style="background:#2E2427"></i></div>
+        <div class="dir-body">
+          <div class="dir-name"><span class="zh">檀</span><span class="en">Rosewood</span></div>
+          <dl>
+            <div><dt>性格</dt><dd>加了灰與一點紫的乾燥玫瑰，最沉穩、最有主張的一組。看起來單價最高。</dd></div>
+            <div><dt>適合</dt><dd>客單價偏高、走精緻預約制；或客群偏 35–40 歲、希望避開「少女感」。</dd></div>
+            <div><dt>風險</dt><dd>離「純淨」最遠，偏向「精緻」。<strong>顏色一深，就必須靠更貴的攝影與更精準的排版才撐得住</strong>，執行門檻最高。對比度反而是三組裡最好的。</dd></div>
+          </dl>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 攝影方向 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">最關鍵的一節</span>
+      <h2>照片決定九成，配色決定一成</h2>
+      <p>這句話聽起來像在推卸設計責任，但它是實話：韓系「乾淨純淨」的感覺，主要來自光線與留白，而那些存在於照片裡，不在 CSS 裡。上面那些灰粉色塊之所以看起來還可以，是因為它們是漸層 —— 換成真實照片後，好壞會立刻分出來。</p>
+    </div>
+    <div class="stack">
+      <h3>要拍成這樣</h3>
+      <ul class="plain">
+        <li><strong>只用自然光，或模擬自然光。</strong>單一方向的柔和側光，長而軟的陰影。日光燈的平光是韓系風格最大的敵人 —— 它會讓任何空間看起來像診所走廊。</li>
+        <li><strong>刻意留白。</strong>照片裡至少三分之一是空的（牆面、桌面、天空）。這些空白後面才有地方放字。</li>
+        <li><strong>拍材質，不只拍東西。</strong>亞麻布的織紋、陶器的霧面、玻璃瓶的折光、凝膠的透明度。特寫比全景有用得多，而且比較好拍。</li>
+        <li><strong>不需要露臉。</strong>手部動作、後頸、肩線、隔著紗簾的輪廓，比正面人像更有韓系感，也完全避開肖像授權問題。</li>
+        <li><strong>降低飽和度，但不要壓黑。</strong>韓系調色是亮的、低對比的、微微偏暖的。不要套深色濾鏡。</li>
+      </ul>
+      <h3>要避開</h3>
+      <ul class="plain">
+        <li>雜物入鏡 —— 插座、延長線、標籤、面紙盒、私人物品。整理現場比修圖便宜。</li>
+        <li>直接用手機閃光燈或天花板日光燈拍的店內照。</li>
+        <li>過度磨皮的前後對比照（除了觀感問題，還可能有法規風險，見合規文件）。</li>
+        <li>網路免費圖庫的外國模特兒照 —— 客人辨識得出來，而且會立刻降低信任。</li>
+      </ul>
+      <p class="callout"><strong>我的具體建議：</strong>如果目前只有手機隨拍的素材，先安排一次半天的品牌攝影（台北行情大約 NT$8,000–20,000，含空間、材質特寫、你本人的形象照）。<strong>這筆錢對網站成品的影響，遠大於把網站平台從免費升級到付費方案。</strong>先有照片，再談網站。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 法規與美學同向 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">一個意外的好消息</span>
+      <h2>法規幫你擋掉了會讓品牌變廉價的東西</h2>
+      <p>我查了台灣「酸類煥膚」的廣告法規，發現一件有意思的事：<strong>那些不能寫的文案、不能放的照片，剛好就是會讓網站看起來廉價的那些。</strong>法規在這裡不是絆腳石，方向和韓系美學是一致的。</p>
+    </div>
+    <div class="scroller">
+      <table>
+        <caption>法規限制與設計方向的對照。完整依據與條號見 docs/05-法規與合規注意事項.md</caption>
+        <thead>
+          <tr><th>法規要求你不能做的</th><th>韓系美學本來也不建議做的</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>不能寫「治療」「改善痘疤」「淡斑」等療效字眼</td>
+            <td>講效果很推銷感；講體驗與感受才高級</td>
+          </tr>
+          <tr>
+            <td>不能寫「媲美醫美」「診所級」（比附醫療，可罰至 500 萬）</td>
+            <td>拿別人當標準，等於承認自己是替代品</td>
+          </tr>
+          <tr>
+            <td>建議完全不放痘疤、色斑的前後對比照</td>
+            <td>過度修圖的對比照是廉價感的最大來源之一</td>
+          </tr>
+          <tr>
+            <td>不能寫「永久」「100%」「全台第一」</td>
+            <td>絕對化用語與克制的品牌調性直接衝突</td>
+          </tr>
+          <tr>
+            <td>客戶見證不宜描述效果（「痘痘好了」）</td>
+            <td>描述體驗（「她花了二十分鐘只是看我的皮膚」）更動人</td>
+          </tr>
+          <tr>
+            <td>「療程」二字對非醫療機構有醫療暗示風險</td>
+            <td>「課程」「保養方案」語感更柔和，也更貼近韓式肌膚管理</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="callout"><strong>所以上面預覽裡的示意內容是這樣設計的：</strong>服務命名用「杏仁酸保養」而不是「杏仁酸換膚療程」；見證那句話講的是諮詢有多仔細，不是皮膚變多好；攝影方向是空間、材質與手部特寫，不是臉部前後對比。<strong>這不是為了規避法規而妥協，這本來就是更好的做法。</strong></p>
+    <p class="callout">⚠️ 但這一切的前提是<strong>問卷 A1</strong>：你是「有醫師的診所」還是「沒有醫師的美容工作室」？兩種身分的合法寫法完全不同 —— 診所反而可以講較多。<strong>在你回答之前，所有文案我都只當佔位處理。</strong></p>
+  </div>
+</section>
+
+<!-- ================= 待決事項 ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">Open questions</span>
+      <h2>我需要你回答才能往下做的事</h2>
+      <p>視覺方向可以先挑，但下面這幾題會改變整個網站的結構與文案。我不想憑猜測往下做 —— 猜錯的成本是整份文案要重寫。</p>
+    </div>
+    <div class="qa">
+      <div>
+        <span class="qnum">A1</span>
+        <div class="qbody">
+          <span class="qtext">你的營業身分是「有醫師的診所」還是「沒有醫師的美容工作室」？</span>
+          <span class="qwhy">這題決定網站上每一句話的法律紅線。台灣對「醫療行為」與「美容保養」的界線管得很嚴，同一組照片、同一個版面，兩種身分的合法寫法完全不同。這是所有問題裡最關鍵的一題。</span>
+        </div>
+      </div>
+      <div>
+        <span class="qnum">B1</span>
+        <div class="qbody">
+          <span class="qtext">你說的「動態式網站」，是指「我能自己更新內容」、「有線上預約功能」，還是「有捲動動畫效果」？</span>
+          <span class="qwhy">這三件事的成本差好幾倍。純視覺動態用靜態網站就能做，又快又便宜；能自己更新需要後台；線上預約需要另外的系統與月費。</span>
+        </div>
+      </div>
+      <div>
+        <span class="qnum">B2</span>
+        <div class="qbody">
+          <span class="qtext">你希望客人在網站上完成什麼動作？加 LINE、私訊 IG、填表單，還是直接線上選時段預約？</span>
+          <span class="qwhy">網站的成敗只看這一件事。首頁只能有一個最主要的目的，多了就會互相稀釋。</span>
+        </div>
+      </div>
+      <div>
+        <span class="qnum">C4</span>
+        <div class="qbody">
+          <span class="qtext">你現在手上有哪些照片？有 logo 向量檔嗎？有專業攝影的空間照嗎？</span>
+          <span class="qwhy">這題決定視覺的可行上限。素材不足的話，「霧」這個方向就不能選 —— 它完全靠照片撐。</span>
+        </div>
+      </div>
+      <div>
+        <span class="qnum">C1</span>
+        <div class="qbody">
+          <span class="qtext">有沒有你看過覺得「就是這個感覺」的網站或 IG 帳號？</span>
+          <span class="qwhy">給我兩三個連結，比任何形容詞都有用。反過來，你明確討厭的風格也同樣有幫助。</span>
+        </div>
+      </div>
+      <div>
+        <span class="qnum">E3</span>
+        <div class="qbody">
+          <span class="qtext">上線之後，改文字、換照片，你想自己來嗎？</span>
+          <span class="qwhy">這題直接決定平台選擇。想自己改就需要後台（WordPress、Wix 這類）；不介意找人改，靜態網站更快、更穩、更省錢。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="eyebrow">HanFace · 視覺方向樣稿</p>
+    <p>版型、文案、照片全為示意，非定稿。所有服務名稱與價格均為填充內容。文案未經法規檢查，正式撰寫前須先確認營業身分。</p>
+    <p>挑一個方向，或告訴我哪裡不對 —— 「太甜」、「太冷」、「顏色再淡一點」都是有用的回饋。</p>
+  </div>
+</footer>
+
+<script>
+  const PALETTES = {
+    mist: {
+      zh: "霧", en: "Mist", idx: "方向一",
+      tokens: [
+        { role: "底色 Ground",  hex: "#FCFAF9", use: "頁面主背景" },
+        { role: "面色 Surface", hex: "#F4EEEB", use: "區塊、卡片底" },
+        { role: "線色 Line",    hex: "#E4D9D4", use: "分隔線、邊框" },
+        { role: "淺藕 Blush",   hex: "#DCC5BF", use: "裝飾色塊，不可放字" },
+        { role: "深藕 Deep",    hex: "#8A6357", use: "按鈕、連結" },
+        { role: "文字 Ink",     hex: "#332C2A", use: "標題與正文" },
+        { role: "次文 Muted",   hex: "#7A6C67", use: "說明、註解" }
+      ]
+    },
+    lotus: {
+      zh: "藕", en: "Lotus", idx: "方向二",
+      tokens: [
+        { role: "底色 Ground",  hex: "#FDF9F7", use: "頁面主背景" },
+        { role: "面色 Surface", hex: "#F6E7E1", use: "區塊、卡片底" },
+        { role: "線色 Line",    hex: "#EAD3CB", use: "分隔線、邊框" },
+        { role: "淺藕 Blush",   hex: "#E2B4A6", use: "裝飾色塊，不可放字" },
+        { role: "深藕 Deep",    hex: "#96594C", use: "按鈕、連結" },
+        { role: "文字 Ink",     hex: "#3D2E2B", use: "標題與正文" },
+        { role: "次文 Muted",   hex: "#856B65", use: "說明、註解" }
+      ]
+    },
+    rosewood: {
+      zh: "檀", en: "Rosewood", idx: "方向三",
+      tokens: [
+        { role: "底色 Ground",  hex: "#FAF6F5", use: "頁面主背景" },
+        { role: "面色 Surface", hex: "#EFE0DE", use: "區塊、卡片底" },
+        { role: "線色 Line",    hex: "#DFC9C7", use: "分隔線、邊框" },
+        { role: "淺藕 Blush",   hex: "#C99A9C", use: "裝飾色塊，不可放字" },
+        { role: "深藕 Deep",    hex: "#834F54", use: "按鈕、連結" },
+        { role: "文字 Ink",     hex: "#2E2427", use: "標題與正文" },
+        { role: "次文 Muted",   hex: "#6E5559", use: "說明、註解" }
+      ]
+    }
+  };
+
+  const canvas = document.getElementById("canvas");
+  const phone = document.getElementById("phoneScreen");
+  const palName = document.getElementById("palName");
+  const tokensEl = document.getElementById("tokens");
+  const stripEl = document.getElementById("strip");
+  const tabs = Array.from(document.querySelectorAll(".pal-tab"));
+
+  function render(key) {
+    const p = PALETTES[key];
+    canvas.dataset.pal = key;
+    phone.dataset.pal = key;
+    palName.textContent = `${p.idx}　${p.zh}　${p.en}`;
+
+    tabs.forEach(t => t.setAttribute("aria-pressed", String(t.dataset.set === key)));
+
+    tokensEl.innerHTML = p.tokens.map(t => `
+      <div class="token">
+        <div class="chip-area" style="background:${t.hex}"></div>
+        <div class="token-meta">
+          <span class="token-role">${t.role}</span>
+          <span class="token-hex">${t.hex}</span>
+          <span class="token-use">${t.use}</span>
+        </div>
+      </div>`).join("");
+
+    stripEl.innerHTML = p.tokens.map(t => `<div style="background:${t.hex}" title="${t.role} ${t.hex}"></div>`).join("");
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => render(t.dataset.set)));
+  render("lotus");
+</script>
