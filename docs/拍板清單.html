@@ -1,0 +1,754 @@
+<title>HanFace 拍板清單</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ============================================================
+     token 系統
+     light 定義在 bare :root，dark 只覆寫 token
+     ============================================================ */
+  :root {
+    --ground:      #FBF8F7;
+    --surface:     #F4EFED;
+    --surface-2:   #EDE6E3;
+    --line:        #E4DAD6;
+    --line-firm:   #CFC0BA;
+    --ink:         #241E1D;
+    --ink-2:       #433936;
+    --muted:       #6E6461;
+    --faint:       #746A66;
+    --accent:      #8A5347;
+    --accent-soft: #C4A199;
+
+    /* 急迫度：以明度階梯區分，不用紅黃綠號誌 */
+    --tier-1:      #8E3B2C;
+    --tier-1-bg:   #F2E3DF;
+    --tier-2:      #7A6152;
+    --tier-2-bg:   #EFE8E2;
+    --tier-3:      #7E7A76;
+    --tier-3-bg:   #ECEAE8;
+
+    --ok:          #4A6B52;
+    --ok-bg:       #E4EDE5;
+
+    --serif: "Newsreader", "Iowan Old Style", Palatino, Georgia, serif;
+    --han: "PingFang TC", "Hiragino Sans TC", "Noto Sans TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --page: 1060px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #171413;
+      --surface:     #1F1A19;
+      --surface-2:   #272120;
+      --line:        #332B29;
+      --line-firm:   #4A3E3B;
+      --ink:         #EFE8E5;
+      --ink-2:       #D5C9C4;
+      --muted:       #9D908B;
+      --faint:       #8E827D;
+      --accent:      #D9A294;
+      --accent-soft: #7A5146;
+
+      --tier-1:      #E8A08D;
+      --tier-1-bg:   #33211D;
+      --tier-2:      #C8AE97;
+      --tier-2-bg:   #2B2320;
+      --tier-3:      #A8A19C;
+      --tier-3-bg:   #262322;
+
+      --ok:          #9DBFA3;
+      --ok-bg:       #202B22;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #171413;
+    --surface:     #1F1A19;
+    --surface-2:   #272120;
+    --line:        #332B29;
+    --line-firm:   #4A3E3B;
+    --ink:         #EFE8E5;
+    --ink-2:       #D5C9C4;
+    --muted:       #9D908B;
+    --faint:       #8E827D;
+    --accent:      #D9A294;
+    --accent-soft: #7A5146;
+    --tier-1:      #E8A08D;
+    --tier-1-bg:   #33211D;
+    --tier-2:      #C8AE97;
+    --tier-2-bg:   #2B2320;
+    --tier-3:      #A8A19C;
+    --tier-3-bg:   #262322;
+    --ok:          #9DBFA3;
+    --ok-bg:       #202B22;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--han);
+    font-size: 16px;
+    line-height: 1.78;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "palt" 1;
+  }
+
+  .wrap { max-width: var(--page); margin: 0 auto; padding: 0 26px; }
+
+  h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
+  p { margin: 0; }
+  ul { margin: 0; padding-left: 1.15em; }
+  li + li { margin-top: 5px; }
+
+  .num { font-family: var(--serif); font-variant-numeric: tabular-nums; }
+  .mono { font-family: var(--mono); font-size: .84em; letter-spacing: .01em; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- 頁首 ---------- */
+  .masthead { padding: 68px 0 30px; }
+  .masthead .wrap { display: flex; flex-direction: column; gap: 20px; }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5.4vw, 50px);
+    line-height: 1.12;
+    letter-spacing: -.005em;
+  }
+  .masthead .lede { color: var(--ink-2); font-size: 17px; max-width: 60ch; }
+  .stamp {
+    display: flex; flex-wrap: wrap; gap: 6px 22px;
+    font-size: 12.5px; color: var(--muted);
+    border-top: 1px solid var(--line); padding-top: 12px;
+  }
+  .stamp b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- 三種工作 ---------- */
+  .shape { padding: 34px 0 8px; }
+  .shape-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+    margin-top: 20px;
+  }
+  .shape-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 20px 20px 22px;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .shape-card .big {
+    font-family: var(--serif);
+    font-size: 46px; line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .shape-card h3 { font-size: 15px; font-weight: 600; }
+  .shape-card p { font-size: 13.5px; color: var(--muted); line-height: 1.68; }
+  .shape-card .cost {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--faint); border-top: 1px dashed var(--line-firm);
+    padding-top: 8px; margin-top: 3px;
+  }
+
+  /* ---------- 區塊 ---------- */
+  .band { padding: 52px 0; border-top: 1px solid var(--line); }
+  .band-head { display: flex; flex-direction: column; gap: 9px; margin-bottom: 26px; }
+  .band-head h2 { font-family: var(--serif); font-size: clamp(22px, 3vw, 29px); line-height: 1.3; }
+  .band-head .sub { color: var(--muted); font-size: 14.5px; max-width: 62ch; }
+
+  /* ---------- 決策項目 ---------- */
+  .items { display: flex; flex-direction: column; gap: 0; }
+  .item {
+    display: grid;
+    grid-template-columns: 26px 30px 1fr;
+    gap: 0 12px;
+    align-items: start;
+    padding: 13px 0 13px 12px;
+    border-top: 1px solid var(--line);
+    border-left: 3px solid transparent;
+  }
+  .item:last-child { border-bottom: 1px solid var(--line); }
+  .item.t1 { border-left-color: var(--tier-1); }
+  .item.t2 { border-left-color: var(--accent-soft); }
+  .item.t3 { border-left-color: var(--line-firm); }
+
+  .item input[type="checkbox"] {
+    appearance: none;
+    width: 15px; height: 15px; margin: 5px 0 0;
+    border: 1.5px solid var(--line-firm);
+    border-radius: 2px; background: var(--ground);
+    cursor: pointer; flex: 0 0 auto;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .item input[type="checkbox"]:hover { border-color: var(--accent); }
+  .item input[type="checkbox"]:checked {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .item input[type="checkbox"]:checked::after {
+    content: "✓"; display: block; color: var(--ground);
+    font-size: 11px; line-height: 12px; text-align: center; font-weight: 700;
+  }
+  .item.done .q, .item.done .why { opacity: .42; text-decoration: line-through; text-decoration-thickness: 1px; }
+  .item.done .why { text-decoration: none; }
+
+  .item .id {
+    font-family: var(--serif); font-variant-numeric: tabular-nums;
+    font-size: 18px; color: var(--faint); text-align: right; padding-top: 1px;
+  }
+  .item .body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .item .q { font-size: 15px; font-weight: 600; line-height: 1.55; }
+  .item .why { font-size: 13px; color: var(--muted); line-height: 1.65; }
+  .item .why b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- 矛盾卡 ---------- */
+  .clashes { display: flex; flex-direction: column; gap: 16px; }
+  .clash {
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .clash-top {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    padding: 15px 20px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .clash-top .cid {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--ground); background: var(--accent);
+    padding: 2px 8px; border-radius: 2px; letter-spacing: .04em;
+  }
+  .clash-top h3 { font-size: 15.5px; font-weight: 600; line-height: 1.5; flex: 1 1 300px; }
+  .clash-body { padding: 15px 20px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: grid; grid-template-columns: 82px 1fr; gap: 12px; align-items: start; }
+  .row .k {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--faint); padding-top: 4px;
+  }
+  .row .v { font-size: 14px; line-height: 1.7; color: var(--ink-2); }
+  .row .v b { color: var(--ink); font-weight: 600; }
+
+  .verdict {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-family: var(--mono); letter-spacing: .04em;
+    padding: 3px 9px; border-radius: 2px; white-space: nowrap;
+  }
+  .verdict.now  { background: var(--ok-bg);     color: var(--ok);     border: 1px solid currentColor; }
+  .verdict.you  { background: var(--tier-1-bg); color: var(--tier-1); border: 1px solid currentColor; }
+  .verdict.law  { background: var(--tier-2-bg); color: var(--tier-2); border: 1px solid currentColor; }
+
+  /* ---------- 表格 ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 2px; }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th {
+    background: var(--surface-2); font-weight: 600; font-size: 11px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    font-family: var(--mono); white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td .n { font-family: var(--serif); font-variant-numeric: tabular-nums; color: var(--faint); }
+  td b { font-weight: 600; }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: .06em; padding: 2px 7px; border-radius: 2px; white-space: nowrap;
+  }
+  .pill.p1 { background: var(--tier-1); color: var(--ground); }
+  .pill.p2 { background: var(--tier-2-bg); color: var(--tier-2); border: 1px solid var(--tier-2); }
+  .pill.p3 { background: transparent; color: var(--tier-3); border: 1px dashed var(--line-firm); }
+
+  /* ---------- 附註 ---------- */
+  .note {
+    border-left: 2px solid var(--accent-soft);
+    padding: 3px 0 3px 18px;
+    color: var(--ink-2); font-size: 14px; line-height: 1.72;
+    max-width: 66ch;
+  }
+  .note strong { color: var(--ink); }
+
+  .gaps { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .gap {
+    border: 1px solid var(--line); border-radius: 2px;
+    padding: 14px 16px; background: var(--surface);
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .gap h4 { font-size: 14px; font-weight: 600; }
+  .gap p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ---------- 進度 ---------- */
+  .progress {
+    position: sticky; bottom: 0; z-index: 20;
+    background: color-mix(in srgb, var(--ground) 93%, transparent);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+  }
+  .progress .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; padding-top: 11px; padding-bottom: 11px;
+  }
+  .progress .label { font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+  .progress .bar { flex: 1 1 180px; height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; min-width: 120px; }
+  .progress .fill { height: 100%; width: 0%; background: var(--accent); transition: width .3s ease; }
+  .progress button {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    background: transparent; border: 1px solid var(--line-firm);
+    border-radius: 2px; padding: 4px 10px; cursor: pointer;
+  }
+  .progress button:hover { border-color: var(--accent); color: var(--accent); }
+
+  footer { padding: 40px 0 90px; color: var(--faint); font-size: 12.5px; }
+  footer .wrap { display: flex; flex-direction: column; gap: 7px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  @media (max-width: 640px) {
+    .item { grid-template-columns: 22px 26px 1fr; padding-left: 9px; }
+    .row { grid-template-columns: 1fr; gap: 3px; }
+    .row .k { padding-top: 0; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">HanFace ／ 決策彙整</span>
+    <h1>你要拍板的 43 件事</h1>
+    <p class="lede">
+      九份規劃文件、一萬行內容，最後濃縮成兩種東西：<b>文件之間打架的 9 條</b>，以及<b>只有你知道答案的 34 項</b>。這一頁把它們攤平，並先替你分好哪些現在就能結案。
+    </p>
+    <div class="stamp">
+      <span><b>來源</b> docs/solutions/ 九份方案 ＋ 索引</span>
+      <span><b>整理</b> 2026-08-18</span>
+      <span><b>勾選狀態</b> 存在你的瀏覽器，重新整理不會消失</span>
+    </div>
+  </div>
+</header>
+
+<section class="shape">
+  <div class="wrap">
+    <div class="band-head" style="margin-bottom:0">
+      <span class="eyebrow">先看清楚這是什麼</span>
+      <h2>這 43 件事其實是三種完全不同的工作</h2>
+      <p class="sub">最容易讓人卡住的不是數量，是把它們當成同一件事。分開之後，其中一大半今天下午就能清掉。</p>
+    </div>
+    <div class="shape-grid">
+      <div class="shape-card">
+        <span class="big">10</span>
+        <h3>你已經知道答案，只是還沒寫下來</h3>
+        <p>店在哪、幾張床、窗戶朝哪、用什麼儀器、logo 有沒有向量檔。這些不需要思考，只需要打字。</p>
+        <span class="cost">預估 30–45 分鐘</span>
+      </div>
+      <div class="shape-card">
+        <span class="big">8</span>
+        <h3>真的要想的決定</h3>
+        <p>定價走哪一階、要不要賣套票、攝影花多少、網域選哪個。這些會鎖住之後三年，值得慢慢想。</p>
+        <span class="cost">預估 2–3 小時，建議分兩天</span>
+      </div>
+      <div class="shape-card">
+        <span class="big">9</span>
+        <h3>文件互相矛盾，需要裁決</h3>
+        <p>九個分析各自獨立作業，所以彼此打架。<b>其中 4 條我已經替你裁決</b>，3 條卡在上面那 8 項，2 條要問律師。</p>
+        <span class="cost">你實際要處理的只有 2 條</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">第一批 ／ 本週</span>
+      <h2>只是把你已經知道的事寫下來</h2>
+      <p class="sub">
+        這十項全部是關於你自己的事實，沒有一項需要判斷。但它們同時卡住九份文件裡的空格 ——
+        在你寫下來之前，文案、拍攝清單、契約草稿全部只能停在佔位符。
+      </p>
+    </div>
+    <div class="items">
+      <label class="item t1"><input type="checkbox" data-k="d1"><span class="id">1</span><span class="body">
+        <span class="q">已經開業了嗎？有多少既有客人？</span>
+        <span class="why">全批最大的分岔。<b>若已開業</b>，定位、IG 歷史內容、既有客人的契約全部要改寫走另一條路</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d5"><span class="id">5</span><span class="body">
+        <span class="q">儀器清單與型號，有沒有醫療器材許可證字號？</span>
+        <span class="why">全批<b>唯一涉及刑責</b>的項目。非醫療機構使用醫療器材是刑事責任，不是罰鍰</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d6"><span class="id">6</span><span class="body">
+        <span class="q">用哪些產品？有沒有自有品牌？</span>
+        <span class="why">自有品牌牽涉產品登錄與 PIF，一般化粧品自 115/7/1 已強制</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d7"><span class="id">7</span><span class="body">
+        <span class="q">店面地點與商圈：住宅區／辦公區／商場／捷運幾分鐘？</span>
+        <span class="why">決定定價情境 A 可不可行、slogan 用地點型還是理性型、Google 商家的權重怎麼配</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d8"><span class="id">8</span><span class="body">
+        <span class="q">空間條件：獨立嗎？門能關嗎？隔音？幾張床？有專屬盥洗？</span>
+        <span class="why">這是定價 A／B／C <b>最硬的分界線</b>。精緻定位如果沒有獨立關門的空間，撐不起來</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d9"><span class="id">9</span><span class="body">
+        <span class="q">窗戶朝哪個方位？幾扇？多大？有無遮蔽？頂燈能不能單獨關掉？</span>
+        <span class="why">直接決定<b>自己拍能不能拍</b>。頂燈關不掉，日光燈的平光會毀掉整組照片</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d11"><span class="id">11</span><span class="body">
+        <span class="q">logo 有沒有向量檔（.ai／.svg／.eps）？</span>
+        <span class="why">這件事<b>比照片更早</b>要確認。沒有向量檔，網站與所有印刷品都會受影響</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d13"><span class="id">13</span><span class="body">
+        <span class="q">不用 LINE 的原因是什麼？</span>
+        <span class="why">一句話就能砍掉三份文件的分支。若原因是「不想下班被找」，<b>LINE 的營業時間外自動回覆反而比 IG 更保護你</b></span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d14"><span class="id">14</span><span class="body">
+        <span class="q">IG 是個人帳號還是專業帳號？追蹤數多少？</span>
+        <span class="why"><b>個人帳號無法連接任何官方 IG 動態牆</b>。這會直接改變首頁的一個區段怎麼做</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d18"><span class="id">18</span><span class="body">
+        <span class="q">「在韓國看到另一種做法」是事實嗎？</span>
+        <span class="why">有一份文案範本預設了你有韓國學習經驗。<b>若沒有，那段必須改寫</b>，否則構成不實陳述（公平交易法第 21 條）</span></span></label>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">第二批 ／ 本週</span>
+      <h2>真的要想的八個決定</h2>
+      <p class="sub">
+        這八項會鎖住之後很長一段時間，其中定價那題有人直接說「選錯要三年才能改」。
+        建議分兩天想，不要一次做完。
+      </p>
+    </div>
+    <div class="items">
+      <label class="item t1"><input type="checkbox" data-k="d3"><span class="id">3</span><span class="body">
+        <span class="q">定價走哪個情境：A 親民／B 標準／C 精緻？</span>
+        <span class="why">被形容為「<b>難以逆轉的決定</b>」。往下調價客人會回來，往上調價客人會走 —— 所以寧可從高往低</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d4"><span class="id">4</span><span class="body">
+        <span class="q">每月固定成本是多少？你想要的月薪是多少？</span>
+        <span class="why">缺這兩個數字，定價自檢表算不出來。<b>而算出來的結果可能直接推翻上一題</b> —— 先算再選</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d2"><span class="id">2</span><span class="body">
+        <span class="q">服務項目清單與各自時長</span>
+        <span class="why">命名、表單選項、契約第 3 條、拍攝清單、首頁草案、IG 貼文日曆<b>全部空白等這一項</b></span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d16"><span class="id">16</span><span class="body">
+        <span class="q">要不要賣套票？若要，單筆上限抓 9,999／20,000／26,500？</span>
+        <span class="why">三份文件給了三個答案（見矛盾 <span class="mono">A2</span>）。<b>建議第一年只賣 9,999 以下</b>，同時避開三個尚未查證的法規門檻</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d15"><span class="id">15</span><span class="body">
+        <span class="q">服務命名選哪一套？</span>
+        <span class="why">三套編號制並存，其中一套踩到另外兩套都警告過的陷阱（見矛盾 <span class="mono">A6</span>）</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d10"><span class="id">10</span><span class="body">
+        <span class="q">攝影預算：0／3,000 以內／8,000–25,000？</span>
+        <span class="why">韓系「乾淨純淨」九成來自光線與留白，<b>而那些存在於照片裡，不在 CSS 裡</b>。這筆錢對成品的影響大於平台升級</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d12"><span class="id">12</span><span class="body">
+        <span class="q">網域選哪個？</span>
+        <span class="why">IG bio 與所有追蹤連結都在等這個答案。<b>順序反了要做兩次</b>。⚠️ <code class="mono">hanface.tw</code> 能不能註冊我查不到，要你自己查</span></span></label>
+      <label class="item t1"><input type="checkbox" data-k="d17"><span class="id">17</span><span class="body">
+        <span class="q">上線期限與預算上限？</span>
+        <span class="why">決定「先攝影再建站」還是「先上線再補照片」—— 這兩條路的做法完全不同</span></span></label>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">九條矛盾</span>
+      <h2>文件之間打架的地方</h2>
+      <p class="sub">
+        九個分析各自獨立作業，所以會有互相衝突的建議。這是預期中的事，也正是為什麼要有這一頁 ——
+        <b>如果你只讀其中幾份而不知道它們在哪裡打架，會拿到互相矛盾的指示。</b>
+      </p>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px">
+      <span class="verdict now">4 條 ／ 我已裁決，不用你處理</span>
+      <span class="verdict you">3 條 ／ 卡在你的決定</span>
+      <span class="verdict law">2 條 ／ 要問律師或衛生局</span>
+    </div>
+
+    <div class="clashes">
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A1</span>
+          <h3>「解約手續費」有四個版本，而三份文件還在用最舊的那個</h3>
+          <span class="verdict law">問衛生局</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">爭點</span><span class="v">
+            不只是條號問題。有三份文件建議把「<b>依法不得收取解約手續費</b>」當成信任訊號寫上網站 ——
+            但若法規其實允許收，你就是在網站上對法律做了錯誤陳述。而依「廣告即契約內容」，<b>錯誤陳述會反過來綁住你自己</b>。</span></div>
+          <div class="row"><span class="k">建議</span><span class="v">
+            網站上<b>不要寫任何關於手續費的法律主張</b>，只寫你自己的政策（例如「未使用次數全額退還，不收手續費」）。
+            你可以比法律更寬鬆，但不要替法律代言。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            若套票單筆大到 10% 有實質意義（3 萬以上），才值得付律師費把這條寫對。單筆 1 萬以下時最大金額是 1,000 元，不划算。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A2</span>
+          <h3>套票金額上限三個答案，其中一份還誤引了另一份</h3>
+          <span class="verdict you">卡在決策 16</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">爭點</span><span class="v">
+            9,999／20,000／26,500 三個門檻。而其中一份寫「如果你採納我的建議把套票壓在 9,999 以下（見定價文件）」——
+            <b>定價文件並沒有這樣建議</b>，它說的是「每個情境保留一階 9,999 以下的入門套票」，被誤讀成全部。</span></div>
+          <div class="row"><span class="k">建議</span><span class="v">
+            <b>第一年只賣 9,999 以下。</b>它讓「1 萬元書面契約門檻」「3 日審閱期舉證」「通訊交易 7 日解除權」
+            三個還沒查清楚的問題同時降到最低影響。等有三個月正常價成交紀錄再開完整階梯。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            若客單價在 3,500 以上，9,999 連三次都買不到，這個門檻就失去意義。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A3</span>
+          <h3>「首次不滿意全額退」—— 一份力推，另一份說那是效果擔保的教科書定義</h3>
+          <span class="verdict law">最值得花錢問的一題</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">爭點</span><span class="v">
+            推薦方的法理區分（對服務體驗負責 ≠ 對結果負責）站得住；但反對方的顧慮更實際 ——
+            <b>「不滿意」的認定權完全在客人手上</b>，而依定型化契約規定，<b>效果擔保未達成應退還已付全部費用</b>。
+            這句話一旦上網站，它就是契約內容。</span></div>
+          <div class="row"><span class="k">建議</span><span class="v">
+            先不要寫上網站。改成內部政策，遇到真的不滿意的客人時個案處理 —— 你的最大暴露只有一次服務的成本，
+            但<b>不要把它變成一個公開的承諾</b>。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            若律師明確認為它不構成效果擔保，那推薦方是對的，而且這確實是很有力的成交工具。<b>這是我最希望你花錢問的一題。</b></span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A4</span>
+          <h3>訂金能不能沒收，三份文件給了三個相反答案</h3>
+          <span class="verdict you">卡在決策 25</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">爭點</span><span class="v">
+            有條件沒收／永不沒收／直接沒收。<b>而其中一份自己前後不一致</b> ——
+            前面說「收訂金是第 4 級手段，只在前三級都做過、爽約仍超過 15% 時才用」，
+            後面的政策範本卻直接寫「首次體驗與旺季時段需要預付」，<b>剛好對最敏感的新客收費</b>。</span></div>
+          <div class="row"><span class="k">建議</span><span class="v">
+            <b>第一年完全不收訂金。</b>先做前三級（確認訊息、前一日提醒、明確的改約規則），
+            實測三個月。多數一人工作室的爽約率沒有高到需要收訂金。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            實測三個月若爽約率低於 5%，整套都不要做 —— 不要為了小問題增加所有客人的摩擦。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A5</span>
+          <h3>體驗價比例與「原價」兩個字，一份已修正，另外四處還沒跟上</h3>
+          <span class="verdict now">已裁決</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">裁決</span><span class="v">
+            全批統一：比例改成 <b>60–70%</b>，「原價」兩個字改成「<b>單堂價</b>」。四處文字修正。</span></div>
+          <div class="row"><span class="k">為什麼</span><span class="v">
+            這同時消掉一個你完全沒必要承擔的公平交易法風險 —— <b>因為你還沒開業，任何「原價」都還沒真的成交過</b>，
+            寫「原價」就是虛構一個從未存在的價格。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            等有三個月以上以正常價成交的紀錄，「原價」就可以寫了，那時錨定效果還會更強。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A6</span>
+          <h3>服務命名三套並存，其中一套踩到另外兩套都警告過的陷阱</h3>
+          <span class="verdict you">卡在決策 15</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">爭點</span><span class="v">
+            兩份文件都明確警告「<b>編號不可暗示強度階梯</b>」，而第三套的編號恰好與價格同向遞增 ——
+            這正是最容易被讀成「號碼越大越強」的結構。而它的服務頁範例<b>沒有帶上那句免責註記</b>。</span></div>
+          <div class="row"><span class="k">建議</span><span class="v">
+            若用編號制，菜單上必須明寫「<b>號碼代表順序，不代表強弱。多數人會在 1 號與 2 號之間長期輪替</b>」。
+            否則客人會自動理解成「3 號最有效」—— 那既是暗示效果比較，也會逼你只賣最貴的那個。</span></div>
+          <div class="row"><span class="k">何時改變</span><span class="v">
+            若你完全不打算擴充服務項目，直接用功能描述命名最安全、Google 搜尋最好、也不用教育客人記號碼。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A7</span>
+          <h3>「本店為美容工作室，非醫療機構」該不該出現在首頁</h3>
+          <span class="verdict now">已裁決</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">裁決</span><span class="v">
+            <b>加上去</b>，但不放在第一屏破壞氣質。位置在「適合／請先與我們談談」區塊上方一行小字，或頁尾上方。</span></div>
+          <div class="row"><span class="k">為什麼</span><span class="v">
+            零成本，而且<b>在「整體綜合表現評價」上是加分不是扣分</b> —— 它讓整站的敘事明確落在非醫療側。
+            法規看的是整體印象，主動聲明身分比含糊帶過安全得多。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A8</span>
+          <h3>首頁資訊架構有兩套，且對「價格放不放首頁」意見相反</h3>
+          <span class="verdict now">已裁決</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">裁決</span><span class="v">
+            以其中一套的區段順序為主骨架 —— 它<b>把副作用揭露義務與 FAQ 都變成首頁的視覺區塊</b>，
+            這是很聰明的做法：把法律義務變成信任資產。</span></div>
+          <div class="row"><span class="k">價格</span><span class="v">
+            <b>放。</b>而且全公開，不要寫「起」——「起」字本身有法規風險，而且對 25–40 歲的客群，
+            價格不透明是最直接的勸退理由。</span></div>
+        </div>
+      </article>
+
+      <article class="clash">
+        <div class="clash-top"><span class="cid">A9</span>
+          <h3>IG 動態牆要不要往前放 —— 一份說第二區段，一份說那是漏水</h3>
+          <span class="verdict now">已裁決</span></div>
+        <div class="clash-body">
+          <div class="row"><span class="k">裁決</span><span class="v">
+            <b>固定放在 CTA 之後、頁尾之前。</b>理由很簡單：訪客本來就是從 IG 來的，
+            你在首頁再放一次 IG 內容，只是把他們送回 IG —— 也就是離開你的預約流程。</span></div>
+          <div class="row"><span class="k">還有一點</span><span class="v">
+            自動 IG 牆等於<b>放棄事前審核權</b>，會把 IG 的法規風險搬到官網上 ——
+            而官網比 IG 更容易被當成「品牌的正式廣告表現」做整體評價。
+            想借 IG 素材撐版面的正確做法是<b>手動挑 6 張存到網站</b>，不是自動抓。</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">第三批</span>
+      <h2>上線前與三個月內</h2>
+      <p class="sub">這 16 項不急，但別忘了。多數會在做網站的過程中自然被問到。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>要決定什麼</th><th>不決定會卡住</th><th>時機</th></tr></thead>
+        <tbody>
+          <tr><td class="n">19</td><td><b>是否已辦商業登記？</b>統編、負責人、營業地址、聯絡 email</td><td>七份契約草稿全部有「品牌主需填入」，上線前必須清空</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">20</td><td>證照的正式名稱與年資</td><td>關於頁不可有不實陳述</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">21</td><td>首頁走哪一套主視覺（一對一／專業判斷／儀式感）</td><td><b>三套是互斥的策略選擇</b>，不是可以拼起來的三段文字</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">22</td><td>Squarespace 開 Basic 還是 Core？</td><td>決定一半的視覺技法能不能用</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">23</td><td>價格公開程度：全公開／寫「起」／寫區間</td><td>已強烈建議全公開，你只需要確認</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">24</td><td>取消政策嚴格度：寬鬆／平衡／嚴格</td><td>兩份文件各給三個版本，都傾向中間那個</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">25</td><td><b>時段保留金：收不收？能不能沒收？</b></td><td>見矛盾 <span class="mono">A4</span>。建議第一年不收</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">26</td><td>願不願意露臉？有沒有可當模特兒的朋友？</td><td>決定拍攝清單、關於頁的照片插槽、IG 內容支柱怎麼做</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">27</td><td>有沒有中文品牌名？</td><td>影響網頁標題、SEO、Google 商家名稱的一致性</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">28</td><td>紀錄保存年限（法定下限 2 年，兩份文件都建議 5 年）</td><td>隱私權政策與同意書都要填</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">29</td><td>會不會裝 Google Analytics 或 Meta Pixel？要跑廣告嗎？</td><td>若要跑再行銷，<b>隱私權政策必須揭露</b>，建議請律師看</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">30</td><td>異常反應的回覆承諾時間</td><td>這是你要能兌現的承諾，<b>不要寫得比你做得到的更快</b></td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">31</td><td>IG 經營強度：低耗能／主力／高投入</td><td>決定四週貼文日曆要做全部還是只做標記的</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">32</td><td>要不要拍「拍但不公開」的內部紀錄照？</td><td>牽涉三段式授權書；有一份文件傾向完全不做</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">34</td><td><b>要不要註冊商標？</b></td><td><b>在付攝影訂金之前先做免費檢索</b> —— 名字不能用的話，照片會白拍</td><td><span class="pill p2">上線前</span></td></tr>
+          <tr><td class="n">33</td><td>要不要做客人見證／可轉貼回饋？</td><td>有一份建議「想省事就直接不做，交給 Google 評價承接」</td><td><span class="pill p3">三個月內</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">沒人處理的事</span>
+      <h2>十個缺口裡，最該現在動的兩個</h2>
+    </div>
+    <div class="gaps">
+      <div class="gap">
+        <h4>沒有一份總時程表</h4>
+        <p>六份文件各有一套自己的階段表，但沒有人把它們接起來。所以「先做什麼」其實一直沒有答案 —— 這一頁的前兩批就是在補這個。</p>
+      </div>
+      <div class="gap">
+        <h4>商標完全沒人處理，而 <span class="mono">hanface.com</span> 已被別人註冊</h4>
+        <p><b>先做免費檢索，而且要排在付攝影訂金之前。</b>如果名字最後不能用，所有照片、印刷品、網域都要重來。這是整批文件裡投報率最高的十分鐘。</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:20px">
+      其餘八個缺口（營業登記與稅務、保險、IG 歷史貼文清查、差異化定位方法、Reels 音樂授權、中文品牌名、已開業情境、第二位人員）
+      都在索引第六節，不急但別忘。
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">一句話</span>
+      <h2>如果這一頁你只做一件事</h2>
+    </div>
+    <p class="note">
+      <strong>把第一批那十項寫下來。</strong>它們不需要判斷、不需要花錢、不需要等任何人，
+      但它們是九份文件裡所有空格的原料。<br><br>
+      在那之前，我能做的只有佔位文字；在那之後，第一版真實文案就能開始寫。
+    </p>
+  </div>
+</section>
+
+<div class="progress">
+  <div class="wrap">
+    <span class="label" id="pcount">已完成 0 / 18</span>
+    <span class="bar"><span class="fill" id="pfill"></span></span>
+    <button type="button" id="reset">清除勾選</button>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>整理自 <span class="mono">docs/solutions/</span> 九份方案文件與交叉檢查索引，共約 10,200 行。</span>
+    <span>矛盾的裁決標示為「已裁決」者，是我依文件內部證據判斷；標示「問律師」者請勿自行決定。</span>
+    <span>本頁不構成法律意見。文案與契約定稿前請送當地衛生局法規諮詢窗口（免費）或律師確認。</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('.item input[type="checkbox"]'));
+    var countEl = document.getElementById('pcount');
+    var fillEl = document.getElementById('pfill');
+    var KEY = 'hanface-decisions-v1';
+
+    function load() {
+      try {
+        var raw = localStorage.getItem(KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function save(state) {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    var state = load();
+
+    function paint() {
+      var done = 0;
+      boxes.forEach(function (b) {
+        var item = b.closest('.item');
+        if (b.checked) { done++; item.classList.add('done'); }
+        else { item.classList.remove('done'); }
+      });
+      countEl.textContent = '已完成 ' + done + ' / ' + boxes.length;
+      fillEl.style.width = (boxes.length ? (done / boxes.length * 100) : 0) + '%';
+    }
+
+    boxes.forEach(function (b) {
+      var k = b.getAttribute('data-k');
+      if (state[k]) b.checked = true;
+      b.addEventListener('change', function () {
+        state[k] = b.checked;
+        save(state);
+        paint();
+      });
+    });
+
+    document.getElementById('reset').addEventListener('click', function () {
+      boxes.forEach(function (b) { b.checked = false; });
+      state = {};
+      save(state);
+      paint();
+    });
+
+    paint();
+  })();
+</script>
