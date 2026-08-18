@@ -1,0 +1,663 @@
+<title>HanFace 決策問卷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style id="css">
+  :root {
+    --ground:#FBF8F7; --surface:#F4EFED; --surface-2:#EDE6E3;
+    --line:#E4DAD6; --line-firm:#CFC0BA;
+    --ink:#241E1D; --ink-2:#433936; --muted:#6E6461; --faint:#746A66;
+    --accent:#8A5347; --accent-soft:#C4A199;
+    --pick:#8A5347; --pick-bg:#F0E4E0;
+    --a:#8E3B2C; --a-bg:#F2E3DF;
+    --b:#7A6152; --b-bg:#EFE8E2;
+    --c:#4A6B52; --c-bg:#E4EDE5;
+    --d:#5C6070; --d-bg:#E8E9ED;
+    --serif:"Newsreader","Iowan Old Style",Palatino,Georgia,serif;
+    --han:"PingFang TC","Hiragino Sans TC","Noto Sans TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --page:920px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#171413; --surface:#1F1A19; --surface-2:#272120;
+      --line:#332B29; --line-firm:#4A3E3B;
+      --ink:#EFE8E5; --ink-2:#D5C9C4; --muted:#9D908B; --faint:#8E827D;
+      --accent:#D9A294; --accent-soft:#7A5146;
+      --pick:#D9A294; --pick-bg:#33241F;
+      --a:#E8A08D; --a-bg:#33211D;
+      --b:#C8AE97; --b-bg:#2B2320;
+      --c:#9DBFA3; --c-bg:#202B22;
+      --d:#A9AFC0; --d-bg:#22242B;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#171413; --surface:#1F1A19; --surface-2:#272120;
+    --line:#332B29; --line-firm:#4A3E3B;
+    --ink:#EFE8E5; --ink-2:#D5C9C4; --muted:#9D908B; --faint:#8E827D;
+    --accent:#D9A294; --accent-soft:#7A5146;
+    --pick:#D9A294; --pick-bg:#33241F;
+    --a:#E8A08D; --a-bg:#33211D;
+    --b:#C8AE97; --b-bg:#2B2320;
+    --c:#9DBFA3; --c-bg:#202B22;
+    --d:#A9AFC0; --d-bg:#22242B;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  /* class 的 display 會蓋過瀏覽器預設的 [hidden]，必須明確宣告 */
+  [hidden]{display:none !important}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--han);
+       font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;
+       font-feature-settings:"palt" 1;padding-bottom:96px}
+  .wrap{max-width:var(--page);margin:0 auto;padding:0 24px}
+  h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+  p{margin:0}
+  .mono{font-family:var(--mono);font-size:.85em}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+           text-transform:uppercase;color:var(--faint)}
+  a{color:var(--accent);text-underline-offset:3px}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+  header.top{padding:60px 0 26px}
+  header.top .wrap{display:flex;flex-direction:column;gap:16px}
+  header.top h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.14}
+  .lede{color:var(--ink-2);font-size:16.5px;max-width:60ch}
+  .howto{border:1px solid var(--line);border-radius:2px;background:var(--surface);
+         padding:16px 18px;display:flex;flex-direction:column;gap:7px;font-size:14px;
+         color:var(--ink-2);max-width:64ch}
+  .howto b{color:var(--ink)}
+  .howto ul{margin:0;padding-left:1.15em}
+  .howto li+li{margin-top:4px}
+
+  .gband{padding:34px 0 8px;border-top:1px solid var(--line);margin-top:30px}
+  .gband:first-of-type{border-top:0;margin-top:8px}
+  .gband .wrap{display:flex;flex-direction:column;gap:8px}
+  .gband h2{font-family:var(--serif);font-size:clamp(21px,3vw,27px);line-height:1.3}
+  .gband .gsub{color:var(--muted);font-size:14px;max-width:62ch}
+  .gtag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+        padding:2px 8px;border-radius:2px;align-self:flex-start}
+  .gtag.A{background:var(--a-bg);color:var(--a)}
+  .gtag.B{background:var(--b-bg);color:var(--b)}
+  .gtag.C{background:var(--c-bg);color:var(--c)}
+  .gtag.D{background:var(--d-bg);color:var(--d)}
+
+  .qlist{display:flex;flex-direction:column;gap:14px;padding:18px 0 6px}
+  .q{border:1px solid var(--line);border-radius:2px;background:var(--surface);overflow:hidden}
+  .q.answered{border-color:var(--accent-soft)}
+  .qhead{padding:15px 20px 13px;border-bottom:1px solid var(--line);
+         display:flex;flex-direction:column;gap:7px}
+  .qtitle{display:flex;gap:11px;align-items:baseline}
+  .qnum{font-family:var(--serif);font-size:17px;color:var(--faint);
+        font-variant-numeric:tabular-nums;flex:0 0 auto;min-width:26px}
+  .qtext{font-size:16px;font-weight:600;line-height:1.5}
+  .qwhy{font-size:13.5px;color:var(--muted);line-height:1.68;padding-left:37px}
+  .qrec{font-size:13.5px;line-height:1.68;padding:10px 14px;margin-left:37px;
+        background:var(--c-bg);color:var(--ink-2);border-radius:2px}
+  .qrec b{color:var(--ink)}
+  .qbody{padding:15px 20px 18px;display:flex;flex-direction:column;gap:16px}
+
+  .field{display:flex;flex-direction:column;gap:8px}
+  .flabel{font-size:13px;font-weight:600;color:var(--ink-2)}
+  .fhint{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+       border:1px solid var(--line);border-radius:2px;cursor:pointer;
+       background:var(--ground);transition:border-color .15s,background .15s}
+  .opt:hover{border-color:var(--line-firm)}
+  .opt.on{border-color:var(--pick);background:var(--pick-bg)}
+  .opt input{appearance:none;width:15px;height:15px;margin:5px 0 0;flex:0 0 auto;
+             border:1.5px solid var(--line-firm);background:var(--ground);cursor:pointer}
+  .opt input[type=radio]{border-radius:50%}
+  .opt input[type=checkbox]{border-radius:2px}
+  .opt input:checked{border-color:var(--pick);background:var(--pick)}
+  .opt input[type=checkbox]:checked::after{content:"✓";display:block;color:var(--ground);
+             font-size:11px;line-height:12px;text-align:center;font-weight:700}
+  .opt input[type=radio]:checked::after{content:"";display:block;width:5px;height:5px;
+             margin:4px auto;border-radius:50%;background:var(--ground)}
+  .opt span{font-size:14.5px;line-height:1.6}
+
+  input[type=text],textarea{
+    width:100%;font-family:var(--han);font-size:14.5px;line-height:1.7;
+    color:var(--ink);background:var(--ground);
+    border:1px solid var(--line-firm);border-radius:2px;padding:9px 12px}
+  input[type=text]::placeholder,textarea::placeholder{color:var(--faint)}
+  textarea{min-height:88px;resize:vertical}
+  input[type=text]:focus,textarea:focus{border-color:var(--accent);outline:none}
+
+  .otherrow{display:flex;align-items:center;gap:9px;padding-left:12px}
+  .otherrow .mono{color:var(--faint);white-space:nowrap;font-size:12.5px}
+
+  /* 底部工具列 */
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:50;
+        background:color-mix(in srgb,var(--ground) 94%,transparent);
+        backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  .dock .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+              padding-top:12px;padding-bottom:12px}
+  .dock .stat{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .dock .bar{flex:1 1 120px;height:3px;background:var(--surface-2);border-radius:2px;
+             overflow:hidden;min-width:80px}
+  .dock .fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+  button{font-family:var(--han);font-size:13.5px;border-radius:2px;cursor:pointer;
+         padding:8px 16px;border:1px solid var(--line-firm);background:transparent;color:var(--ink-2)}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:var(--ground);font-weight:600}
+  button.primary:hover{opacity:.88;color:var(--ground)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+
+  .msg{font-size:12.5px;padding:5px 10px;border-radius:2px;white-space:nowrap}
+  .msg.ok{background:var(--c-bg);color:var(--c)}
+  .msg.warn{background:var(--b-bg);color:var(--b)}
+  .msg.err{background:var(--a-bg);color:var(--a)}
+
+  /* 匯出面板 */
+  .sheet{position:fixed;inset:0;z-index:60;background:rgb(0 0 0 / .45);
+         display:none;align-items:center;justify-content:center;padding:24px}
+  .sheet.open{display:flex}
+  .sheet-inner{background:var(--ground);border:1px solid var(--line-firm);border-radius:3px;
+               max-width:660px;width:100%;max-height:84vh;display:flex;flex-direction:column}
+  .sheet-head{padding:16px 20px;border-bottom:1px solid var(--line);
+              display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .sheet-head h3{font-family:var(--serif);font-size:19px}
+  .sheet-body{padding:16px 20px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+  .sheet-body p{font-size:13.5px;color:var(--muted);line-height:1.7}
+  .sheet-body textarea{min-height:300px;font-family:var(--mono);font-size:12px;line-height:1.65}
+  .sheet-foot{padding:13px 20px;border-top:1px solid var(--line);display:flex;gap:10px;
+              justify-content:flex-end;flex-wrap:wrap}
+
+  footer{padding:36px 0 20px;color:var(--faint);font-size:12.5px}
+  footer .wrap{display:flex;flex-direction:column;gap:6px}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+  @media (max-width:620px){
+    .qwhy,.qrec{padding-left:0;margin-left:0}
+    .dock .wrap{gap:9px}
+  }
+</style>
+
+<div id="root"></div>
+
+<script type="application/json" id="questions">[{"g":"A","n":"1","q":"已經開業了嗎？","why":"這是全批最大的分岔。若已開業，定位、IG 歷史內容、既有客人的契約全部要走另一條路。","f":[{"k":"a1a","t":"single","label":"目前狀態","o":["已經開業，有穩定回頭客","已經開業，客人還不多","籌備中，尚未營業","沒有固定店面（到府或快閃）"]},{"k":"a1b","t":"text","label":"大約有多少位既有客人？","ph":"例如：20 位左右"}]},{"g":"A","n":"5","q":"會用到哪些儀器？","why":"這是全部項目裡唯一涉及刑事責任的一項 —— 非醫療機構使用醫療器材是刑責，不是罰鍰。","f":[{"k":"a5a","t":"single","label":"儀器使用狀況","o":["完全不使用儀器，純手技","只用一般美容儀器（例如蒸臉、超音波導入）","有使用儀器，但不確定算不算醫療器材"]},{"k":"a5b","t":"long","label":"儀器名稱與型號（一行一台）","ph":"例如：\n蒸臉機 ○○牌 XX-100\n超音波導入儀 ○○牌"}]},{"g":"A","n":"6","q":"使用哪些產品？","why":"若有自有品牌會牽涉產品登錄與 PIF，一般化粧品自 115/7/1 起已強制。","f":[{"k":"a6a","t":"long","label":"主要使用的產品與品牌","ph":"例如：○○牌杏仁酸、△△牌鎮定敷膜"},{"k":"a6b","t":"single","label":"有沒有自有品牌？","o":["沒有，都用別人的","有，已完成產品登錄","有，還沒登錄","打算未來做"]}]},{"g":"A","n":"7","q":"店面在哪裡？","why":"決定親民定位可不可行、slogan 要用地點型還是專業型、Google 商家的權重怎麼配。","f":[{"k":"a7a","t":"text","label":"縣市與商圈","ph":"例如：台北市大安區，近東門"},{"k":"a7b","t":"single","label":"環境類型","o":["住宅區","辦公商業區","百貨或商場內","混合型"]},{"k":"a7c","t":"text","label":"離最近的捷運或主要幹道幾分鐘？","ph":"例如：步行 5 分鐘"}]},{"g":"A","n":"8","q":"空間條件是什麼樣子？","why":"這是定價走親民、標準還是精緻，最硬的一條分界線。精緻定位如果沒有能關門的獨立空間，撐不起來。","f":[{"k":"a8a","t":"multi","label":"符合哪些條件（可複選）","o":["獨立空間，門可以關上","有隔音","與其他人共用空間","有專屬盥洗設備","有獨立等候區","在住家裡"]},{"k":"a8b","t":"single","label":"幾張床？","o":["1 張","2 張","3 張以上"]}]},{"g":"A","n":"9","q":"採光與燈光的條件？","why":"直接決定自己拍能不能拍。頂燈如果關不掉，日光燈的平光會毀掉整組照片 —— 韓系的「乾淨」九成來自光線。","f":[{"k":"a9a","t":"multi","label":"符合哪些條件（可複選）","o":["有窗戶","窗戶朝南或朝西（下午有光）","窗戶朝北或朝東（光線柔和穩定）","窗外有遮蔽物（對面建築、鐵窗、招牌）","頂燈可以單獨關掉","完全沒有窗戶"]},{"k":"a9b","t":"text","label":"窗戶數量與大小","ph":"例如：兩扇，各約 1 公尺寬"}]},{"g":"A","n":"11","q":"logo 有沒有向量檔？","why":"這件事比照片更早要確認。沒有向量檔，網站與所有印刷品的品質都會受限。","f":[{"k":"a11","t":"single","label":"目前有的檔案格式","o":["有向量檔（.ai／.svg／.eps／.pdf）","只有圖片檔（.png／.jpg）","只有手機截圖或照片","還沒有 logo"]}]},{"g":"A","n":"13","q":"為什麼沒有用 LINE 官方帳號？","why":"一句話就能決定三個地方怎麼做。若原因是「不想下班還被找」，LINE 的營業時間外自動回覆反而比 IG 更能保護你。","f":[{"k":"a13","t":"multi","label":"原因（可複選）","o":["不想下班還被客人找","覺得 IG 就夠用了","不知道怎麼設定","以為要另外花錢","其實有在用，只是還沒提到"]}]},{"g":"A","n":"14","q":"IG 帳號的現況？","why":"個人帳號無法連接任何官方 IG 動態牆，這會直接改變首頁一個區段的做法。","f":[{"k":"a14a","t":"single","label":"帳號類型","o":["專業帳號（商業）","專業帳號（創作者）","個人帳號","還沒開帳號"]},{"k":"a14b","t":"text","label":"目前追蹤數","ph":"例如：430"},{"k":"a14c","t":"single","label":"以前的貼文需要清查嗎？","o":["需要，有些用詞可能不妥","不用，都很乾淨","不確定，請幫我看"]}]},{"g":"A","n":"18","q":"有韓國的學習或工作經驗嗎？","why":"有一份文案範本預設了這件事。若不屬實必須改寫 —— 關於頁的不實陳述會觸犯公平交易法第 21 條。","f":[{"k":"a18a","t":"single","label":"實際情況","o":["有，在韓國受過訓或工作過","有去看過或短期參訪，但不算受訓","完全沒有，那是誤會"]},{"k":"a18b","t":"text","label":"如果有，請簡述（這會寫進文案，必須屬實）","ph":"例如：2023 年在首爾上過三個月的肌膚管理課程"}]},{"g":"B","n":"3","q":"定價要走哪一階？","why":"這被形容為「難以逆轉的決定」。往下調價客人會回來，往上調價客人會走 —— 所以寧可從高往低。","f":[{"k":"b3","t":"single","label":"傾向","o":["A 親民：單次 1,200–1,800，靠回訪頻率","B 標準：單次 1,800–2,800，最常見的區間","C 精緻：單次 2,800–4,500，靠體驗與稀缺","還不確定，想先看第 4 題的試算結果"]}]},{"g":"B","n":"4","q":"每月成本與你想要的收入？","why":"缺這兩個數字，定價算不出來。而算出來的結果可能直接推翻上一題 —— 建議先填這題再回去看第 3 題。","f":[{"k":"b4a","t":"text","label":"每月固定成本（房租＋水電＋材料＋其他）","ph":"例如：45,000"},{"k":"b4b","t":"text","label":"你希望每個月能拿到多少？","ph":"例如：60,000"},{"k":"b4c","t":"text","label":"一週打算工作幾天？一天最多接幾位？","ph":"例如：一週 5 天，一天 3 位"}]},{"g":"B","n":"2","q":"服務項目有哪些？各多久？","why":"命名、表單選項、契約、拍攝清單、首頁草案、IG 貼文日曆，全部空白等這一項。","f":[{"k":"b2","t":"long","label":"一行一項，格式：名稱｜時長｜目前價格","ph":"例如：\n杏仁酸保養｜60 分｜1,800\n深層清潔｜90 分｜2,200"}]},{"g":"B","n":"10","q":"攝影預算抓多少？","why":"韓系「乾淨純淨」九成來自光線與留白，而那些存在於照片裡，不在網站程式碼裡。這筆錢對成品的影響大於網站平台升級。","f":[{"k":"b10","t":"single","label":"預算","o":["0，完全自己用手機拍","3,000 以內，租燈或找學生","8,000–15,000，找接案攝影師半天","15,000–25,000，含造型與後製","還不確定"]}]},{"g":"B","n":"12","q":"網域要用哪一個？","why":"IG 個人簡介的連結與所有追蹤網址都在等這個答案。順序反了要重做一次。","f":[{"k":"b12a","t":"multi","label":"想要的（可複選，依偏好順序）","o":["hanface.tw","hanface.com.tw","hanface.co","hanfaceskin.com","hanface.beauty"]},{"k":"b12b","t":"single","label":"查過能不能註冊了嗎？","o":["還沒查","查過，可以註冊","查過，已經被別人註冊"],"hint":"⚠️ hanface.com 已被別人註冊。.tw 的狀態我在這裡查不到，需要你自己到台灣的網域註冊商查詢。"}]},{"g":"B","n":"15","q":"服務要怎麼命名？","why":"三套方案裡有一套會讓客人自動理解成「號碼越大越強」—— 那既是暗示效果比較，也會逼你只賣最貴的那個。","f":[{"k":"b15","t":"single","label":"命名方式","o":["編號制（1 號・淨化／2 號・保濕）","感官材質命名（瓷、綢、露）","功能描述命名（深層清潔護膚）—— 法規最安全、Google 最好找","想沿用現在已經在用的名字"]},{"k":"b15b","t":"text","label":"如果沿用現有名稱，請列出","ph":""}]},{"g":"B","n":"16","q":"要不要賣套票？","why":"單筆超過 1 萬元會同時觸發書面契約門檻、3 日審閱期舉證、通訊交易 7 日解除權三個規定。第一年壓在 9,999 以下可以讓這三個問題的影響同時降到最低。","f":[{"k":"b16","t":"single","label":"傾向","o":["第一年先不賣套票，只賣單次","賣，單筆壓在 9,999 以下（建議）","賣，單筆 20,000 以下","賣，不設上限"]}]},{"g":"B","n":"17","q":"什麼時候要上線？預算上限多少？","why":"決定「先攝影再建站」還是「先上線再補照片」—— 這兩條路的做法完全不同。","f":[{"k":"b17a","t":"single","label":"時程","o":["沒有硬性期限，做好再上","1 個月內","2–3 個月","配合開幕日或特定檔期"]},{"k":"b17b","t":"text","label":"如果有特定日期，是哪一天？","ph":""},{"k":"b17c","t":"text","label":"建置預算上限（不含攝影）","ph":"例如：20,000"}]},{"g":"C","n":"A1","q":"網站上要不要寫「依法不得收取解約手續費」？","why":"有三份分析建議把這句話當成信任訊號寫上網站。但若法規其實允許收，你就是在網站上對法律做了錯誤陳述 —— 而依「廣告即契約內容」，錯誤陳述會反過來綁住你自己。","rec":"不要寫任何關於法律的主張，只寫你自己的政策（例如「未使用次數全額退還，不收手續費」）。你可以比法律更寬鬆，但不要替法律代言。","f":[{"k":"c1","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c1n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A2","q":"套票上限用哪個數字？","why":"三份文件給了 9,999／20,000／26,500 三個答案，其中一份還誤引了另一份的建議。","rec":"第一年只賣 9,999 以下。它讓書面契約門檻、審閱期舉證、通訊交易解除權三個還沒查清楚的問題同時降到最低影響。等有三個月正常價成交紀錄再開完整階梯。","f":[{"k":"c2","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c2n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A3","q":"要不要提供「首次不滿意全額退費」？","why":"一份分析力推它是很有力的成交工具；另一份說那是「效果擔保」的教科書定義 —— 而依定型化契約，效果擔保未達成應退還全部費用，且「不滿意」的認定權完全在客人手上。","rec":"先不要寫上網站。改成內部政策，遇到真的不滿意的客人時個案處理。這是最值得花錢問律師的一題。","f":[{"k":"c3","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下","我想先問律師再決定"]},{"k":"c3n","t":"text","label":"補充","ph":""}]},{"g":"C","n":"A4","q":"要不要收訂金？能不能沒收？","why":"三份文件給了有條件沒收／永不沒收／直接沒收三個相反答案，其中一份自己前後還不一致 —— 而它後面那個版本剛好對最敏感的新客收費。","rec":"第一年完全不收訂金。先做前三級（確認訊息、前一日提醒、明確的改約規則），實測三個月。多數一人工作室的爽約率沒有高到需要收訂金。","f":[{"k":"c4","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c4n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A5","q":"體驗價要怎麼標？","why":"你還沒開業，任何「原價」都還沒真的成交過 —— 寫「原價」等於虛構一個從未存在的價格，這是公平交易法的風險。","rec":"體驗價抓單堂價的 60–70%，而且「原價」兩個字改成「單堂價」。等有三個月以上正常價成交紀錄，再寫原價。","f":[{"k":"c5","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c5n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A6","q":"如果用編號命名，要不要加免責說明？","why":"兩份文件都警告「編號不可暗示強度階梯」，但其中一套的編號恰好與價格同向遞增，最容易被讀成「號碼越大越強」。","rec":"若用編號制，菜單上必須明寫「號碼代表順序，不代表強弱。多數人會在 1 號與 2 號之間長期輪替」。否則會逼你只賣最貴的那個。","f":[{"k":"c6","t":"single","label":"你的決定","o":["採用這個建議","我不用編號制，這題跳過","我想改，理由如下"]},{"k":"c6n","t":"text","label":"補充","ph":""}]},{"g":"C","n":"A7","q":"要不要在首頁寫「本店為美容工作室，非醫療機構」？","why":"法規看的是整體印象。主動聲明身分，在「整體綜合表現評價」上是加分而不是扣分。","rec":"加上去，但不放在第一屏破壞氣質。位置放在「適合／請先與我們談談」區塊上方一行小字，或頁尾上方。零成本。","f":[{"k":"c7","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c7n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A8","q":"價格要不要放在首頁？","why":"兩套首頁架構對這件事意見相反。","rec":"放，而且全公開，不要寫「起」。「起」字本身有法規風險，而且對 25–40 歲的客群，價格不透明是最直接的勸退理由。","f":[{"k":"c8","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下"]},{"k":"c8n","t":"text","label":"如果要改，想怎麼做？","ph":""}]},{"g":"C","n":"A9","q":"IG 動態牆要放在首頁哪個位置？","why":"訪客本來就是從 IG 來的。在首頁再放一次 IG 內容，只是把他們送回 IG —— 也就是離開預約流程。而且自動動態牆等於放棄事前審核權，會把 IG 的法規風險搬到官網上。","rec":"固定放在預約按鈕之後、頁尾之前。想借 IG 素材撐版面的正確做法是手動挑 6 張存到網站，不是自動抓。","f":[{"k":"c9","t":"single","label":"你的決定","o":["採用這個建議","我想改，理由如下","乾脆不要放 IG 動態牆"]},{"k":"c9n","t":"text","label":"補充","ph":""}]},{"g":"D","n":"19","q":"辦商業登記了嗎？","why":"契約草稿裡有七處要填統編與負責人，上線前必須填完。","f":[{"k":"d19a","t":"single","label":"狀態","o":["已辦，有統編","還沒辦","不確定要不要辦"]},{"k":"d19b","t":"text","label":"如果有，統編與登記名稱","ph":""}]},{"g":"D","n":"20","q":"有哪些證照？年資多久？","why":"關於頁不可有不實陳述（公平交易法第 21 條），所以要用正式名稱。","f":[{"k":"d20","t":"long","label":"證照正式名稱與取得年份，以及入行年資","ph":"例如：\n美容乙級技術士（2019）\n入行 6 年"}]},{"g":"D","n":"21","q":"首頁主軸走哪一套？","why":"這三套是互斥的策略選擇，不是可以拼起來的三段文字。","f":[{"k":"d21","t":"single","label":"傾向","o":["一對一的細緻服務（賣營運方式，風險最低）","酸類保養的專業判斷（賣判斷力，需要有實質諮詢流程）","韓式肌膚管理的儀式感（賣習慣與情緒，法規最安全）","請你幫我選"]}]},{"g":"D","n":"22","q":"Squarespace 開哪個方案？","why":"決定一部分視覺技法能不能用。","f":[{"k":"d22","t":"single","label":"方案","o":["Basic（較便宜）","Core（視覺彈性較高）","請你建議","想用別的平台"]},{"k":"d22b","t":"text","label":"如果想用別的平台","ph":""}]},{"g":"D","n":"23","q":"價格公開到什麼程度？","why":"已強烈建議全公開，你只需要確認。「起」字有法規風險。","f":[{"k":"d23","t":"single","label":"選擇","o":["全部公開（建議）","只寫「起」","只寫價格區間","完全不公開，請客人詢問"]}]},{"g":"D","n":"24","q":"取消與改約政策要多嚴？","why":"兩份文件各給三個版本，都傾向中間那個。","f":[{"k":"d24","t":"single","label":"嚴格度","o":["寬鬆：隨時可改，不收費","平衡：24 小時前改約免費（建議）","嚴格：48 小時前改約，逾期計次"]}]},{"g":"D","n":"25","q":"時段保留金收不收？","why":"見前面 A4 的裁決。","f":[{"k":"d25","t":"single","label":"選擇","o":["不收（建議第一年）","收，但可全額退","收，逾期不退"]},{"k":"d25b","t":"text","label":"如果要收，金額多少？","ph":""}]},{"g":"D","n":"26","q":"願不願意在照片裡露臉？","why":"服務業的信任感很大一部分來自「看得到人」，但這完全是個人選擇。不露臉也有做法。","f":[{"k":"d26","t":"multi","label":"可以接受的（可複選）","o":["願意拍形象照","只拍手部動作，不露臉","願意入鏡但不要正面特寫","有朋友可以當模特兒","完全不想入鏡"]}]},{"g":"D","n":"27","q":"有中文品牌名嗎？","why":"影響網頁標題、搜尋、Google 商家名稱的一致性。","f":[{"k":"d27a","t":"single","label":"狀態","o":["有中文名","沒有，只用 HanFace","還在想"]},{"k":"d27b","t":"text","label":"如果有，是什麼？中英哪個為主？","ph":""}]},{"g":"D","n":"28","q":"客人紀錄要保存幾年？","why":"法定下限 2 年，兩份文件都建議 5 年。隱私權政策與同意書都要填這個數字。","f":[{"k":"d28","t":"single","label":"年限","o":["2 年（法定下限）","5 年（建議）","更久"]}]},{"g":"D","n":"29","q":"會裝分析工具或跑廣告嗎？","why":"若要跑再行銷廣告，隱私權政策必須揭露，而且建議請律師看過。","f":[{"k":"d29","t":"single","label":"選擇","o":["都不要","只裝 Google Analytics 看流量","會裝 Meta Pixel，之後要跑 IG 廣告","不確定，先留著之後再說"]}]},{"g":"D","n":"30","q":"客人回報異常反應時，你承諾多久內回覆？","why":"這是你要能兌現的承諾。不要寫得比你實際做得到的更快。","f":[{"k":"d30","t":"single","label":"承諾","o":["24 小時內","48 小時內","營業時間內盡快","不寫具體時間"]}]},{"g":"D","n":"31","q":"IG 打算經營到什麼強度？","why":"決定四週貼文日曆是全部做，還是只做標記的重點。","f":[{"k":"d31","t":"single","label":"強度","o":["低耗能：一週 1 則，不做限動","主力：一週 2–3 則＋限動","高投入：每天都有內容"]}]},{"g":"D","n":"32","q":"要不要拍「拍但不公開」的內部紀錄照？","why":"牽涉三段式授權書；有一份分析傾向完全不做。","f":[{"k":"d32","t":"single","label":"選擇","o":["要，作為服務紀錄","不要，完全不拍客人","不確定"]}]},{"g":"D","n":"34","q":"要不要註冊商標？","why":"先做免費檢索，而且要排在付攝影訂金之前 —— 如果名字最後不能用，所有照片、印刷品、網域都要重來。","f":[{"k":"d34","t":"single","label":"選擇","o":["要註冊","先做免費檢索再決定（建議）","不註冊"]}]},{"g":"D","n":"33","q":"要不要做客人見證？","why":"有一份分析建議「想省事就直接不做，交給 Google 評價承接」。見證若描述效果會有法規風險。","f":[{"k":"d33","t":"single","label":"選擇","o":["要做，會請客人寫回饋","不做，用 Google 評價代替","不確定"]}]}]</script>
+<script type="application/json" id="answers">{}</script>
+
+<script id="app">
+(function () {
+  "use strict";
+
+  var FONT = "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap";
+  var LSKEY = "hanface-q-v1";
+  var OTHER = "__other__";
+
+  var GROUPS = {
+    A: { tag: "已經知道的事", title: "第一批：你已經知道答案的十件事",
+         sub: "這十題全部是關於你自己的事實，沒有一題需要判斷。大約 30 分鐘可以填完，但它們卡住後面所有的文案與設計。" },
+    B: { tag: "真的要想", title: "第二批：八個真正的決定",
+         sub: "這八題會鎖住之後很長一段時間，其中定價那題有人直接說「選錯要三年才能改」。建議分兩天想，不要一次做完。" },
+    C: { tag: "確認裁決", title: "第三批：九條矛盾，請確認或推翻",
+         sub: "九份分析文件各自獨立作業，所以有互相衝突的建議。這裡每一題都附上建議做法 —— 你可以直接採用，也可以推翻，推翻時請寫下你的想法。" },
+    D: { tag: "上線前", title: "第四批：上線前與之後再說的事",
+         sub: "這些不急，但多數會在做網站的過程中被問到。先填的話後面會順很多。" }
+  };
+
+  function readJSON(id, dflt) {
+    var el = document.getElementById(id);
+    if (!el) return dflt;
+    try { return JSON.parse(el.textContent || "null") || dflt; }
+    catch (e) { return dflt; }
+  }
+
+  var QUESTIONS = readJSON("questions", []);
+  var state = readJSON("answers", {});
+
+  try {
+    var local = localStorage.getItem(LSKEY);
+    if (local) {
+      var lo = JSON.parse(local);
+      // 本機草稿優先：填寫的人存檔後又繼續填、但還沒再存一次時，
+      // 重新整理不能把那些新內容丟掉。其他裝置的 localStorage 是空的，
+      // 所以會正常讀到頁面上已存的答案。
+      Object.keys(lo).forEach(function (k) {
+        state[k] = lo[k];
+      });
+    }
+  } catch (e) {}
+
+  function persist() {
+    try { localStorage.setItem(LSKEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function get(k) {
+    if (!state[k]) state[k] = {};
+    return state[k];
+  }
+
+  function el(tag, cls, txt) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (txt !== undefined && txt !== null) n.textContent = txt;
+    return n;
+  }
+
+  /* ---------- 判斷一題是否已作答 ---------- */
+  function fieldFilled(f) {
+    var a = state[f.k];
+    if (!a) return false;
+    if (f.t === "multi") {
+      return (a.v && a.v.length > 0) || !!(a.o && a.o.trim());
+    }
+    if (f.t === "single") {
+      if (a.v === OTHER) return !!(a.o && a.o.trim());
+      return !!a.v;
+    }
+    return !!(a.v && String(a.v).trim());
+  }
+  function qFilled(q) {
+    return q.f.some(fieldFilled);
+  }
+
+  /* ---------- 渲染 ---------- */
+  function renderField(f, card, q) {
+    var wrap = el("div", "field");
+    if (f.label) wrap.appendChild(el("div", "flabel", f.label));
+    if (f.hint) wrap.appendChild(el("div", "fhint", f.hint));
+
+    var a = get(f.k);
+
+    if (f.t === "single" || f.t === "multi") {
+      var isMulti = f.t === "multi";
+      if (isMulti && !Array.isArray(a.v)) a.v = [];
+      var box = el("div", "opts");
+      var opts = (f.o || []).concat(["其他（請自行填寫）"]);
+
+      opts.forEach(function (label, i) {
+        var isOther = i === opts.length - 1;
+        var val = isOther ? OTHER : label;
+        var row = el("label", "opt");
+        var input = document.createElement("input");
+        input.type = isMulti ? "checkbox" : "radio";
+        if (!isMulti) input.name = f.k;
+        input.value = val;
+
+        var on = isMulti ? a.v.indexOf(val) >= 0 : a.v === val;
+        input.checked = on;
+        if (on) row.classList.add("on");
+
+        input.addEventListener("change", function () {
+          if (isMulti) {
+            var arr = get(f.k).v || [];
+            var at = arr.indexOf(val);
+            if (input.checked && at < 0) arr.push(val);
+            if (!input.checked && at >= 0) arr.splice(at, 1);
+            get(f.k).v = arr;
+          } else {
+            get(f.k).v = input.checked ? val : "";
+            Array.prototype.forEach.call(
+              box.querySelectorAll(".opt"),
+              function (o) { o.classList.remove("on"); }
+            );
+          }
+          row.classList.toggle("on", input.checked);
+          otherRow.hidden = !usesOther();
+          persist(); refreshStats(); markCard(card, q);
+        });
+
+        row.appendChild(input);
+        row.appendChild(el("span", null, label));
+        box.appendChild(row);
+      });
+      wrap.appendChild(box);
+
+      function usesOther() {
+        var cur = get(f.k).v;
+        return isMulti ? (cur || []).indexOf(OTHER) >= 0 : cur === OTHER;
+      }
+
+      var otherRow = el("div", "otherrow");
+      otherRow.appendChild(el("span", "mono", "其他："));
+      var otherIn = document.createElement("input");
+      otherIn.type = "text";
+      otherIn.placeholder = "請自行填寫";
+      otherIn.value = a.o || "";
+      otherIn.addEventListener("input", function () {
+        get(f.k).o = otherIn.value;
+        persist(); refreshStats(); markCard(card, q);
+      });
+      otherRow.appendChild(otherIn);
+      otherRow.hidden = !usesOther();
+      wrap.appendChild(otherRow);
+
+    } else {
+      var input2 = f.t === "long"
+        ? document.createElement("textarea")
+        : document.createElement("input");
+      if (f.t !== "long") input2.type = "text";
+      if (f.ph) input2.placeholder = f.ph;
+      input2.value = a.v || "";
+      input2.addEventListener("input", function () {
+        get(f.k).v = input2.value;
+        persist(); refreshStats(); markCard(card, q);
+      });
+      wrap.appendChild(input2);
+    }
+
+    return wrap;
+  }
+
+  function markCard(card, q) {
+    card.classList.toggle("answered", qFilled(q));
+  }
+
+  function renderQuestion(q) {
+    var card = el("article", "q");
+    var head = el("div", "qhead");
+    var t = el("div", "qtitle");
+    t.appendChild(el("span", "qnum", q.n));
+    t.appendChild(el("span", "qtext", q.q));
+    head.appendChild(t);
+    if (q.why) head.appendChild(el("div", "qwhy", q.why));
+    card.appendChild(head);
+
+    var body = el("div", "qbody");
+    if (q.rec) {
+      var rec = el("div", "qrec");
+      var lab = el("b", null, "建議做法：");
+      rec.appendChild(lab);
+      rec.appendChild(document.createTextNode(q.rec));
+      body.appendChild(rec);
+    }
+    q.f.forEach(function (f) { body.appendChild(renderField(f, card, q)); });
+    card.appendChild(body);
+    markCard(card, q);
+    return card;
+  }
+
+  function render() {
+    var root = document.getElementById("root");
+    root.textContent = "";
+
+    var head = el("header", "top");
+    var hw = el("div", "wrap");
+    hw.appendChild(el("span", "eyebrow", "HanFace ／ 決策問卷"));
+    hw.appendChild(el("h1", null, "這些只有你能回答"));
+    var lede = el("p", "lede");
+    lede.textContent = "這是 HanFace 官網規劃到目前為止，卡住的 43 個問題。多數不需要你懂設計或法規 —— 只需要你講清楚自己的店現在長什麼樣子、以及你想要它變成什麼樣子。";
+    hw.appendChild(lede);
+
+    var howto = el("div", "howto");
+    howto.appendChild(el("b", null, "怎麼填"));
+    var ul = document.createElement("ul");
+    [
+      "不用一次填完，也不用照順序。答案會自動存在這台裝置上，關掉再打開還在。",
+      "每題都可以選「其他」自己寫。沒有標準答案，寫「不知道」「還沒想過」也是有用的回答。",
+      "第三批的九題附有建議做法 —— 你可以直接採用，也可以推翻，推翻時請寫下理由。",
+      "全部填完後按右下角的儲存，答案就會回到這一頁上。"
+    ].forEach(function (s) { ul.appendChild(el("li", null, s)); });
+    howto.appendChild(ul);
+    hw.appendChild(howto);
+    head.appendChild(hw);
+    root.appendChild(head);
+
+    ["A", "B", "C", "D"].forEach(function (g) {
+      var list = QUESTIONS.filter(function (q) { return q.g === g; });
+      if (!list.length) return;
+      var band = el("section", "gband");
+      var bw = el("div", "wrap");
+      var tag = el("span", "gtag " + g, GROUPS[g].tag);
+      bw.appendChild(tag);
+      bw.appendChild(el("h2", null, GROUPS[g].title));
+      bw.appendChild(el("p", "gsub", GROUPS[g].sub));
+      band.appendChild(bw);
+      root.appendChild(band);
+
+      var holder = el("div", "wrap");
+      var qlist = el("div", "qlist");
+      list.forEach(function (q) { qlist.appendChild(renderQuestion(q)); });
+      holder.appendChild(qlist);
+      root.appendChild(holder);
+    });
+
+    var foot = el("footer");
+    var fw = el("div", "wrap");
+    [
+      "這份問卷整理自九份規劃文件與交叉檢查索引，共約一萬行。",
+      "第三批的建議做法是依文件內部證據判斷，不構成法律意見。契約與文案定稿前請送當地衛生局法規諮詢窗口（免費）或律師確認。"
+    ].forEach(function (s) { fw.appendChild(el("span", null, s)); });
+    foot.appendChild(fw);
+    root.appendChild(foot);
+
+    root.appendChild(buildDock());
+    root.appendChild(buildSheet());
+    refreshStats();
+  }
+
+  /* ---------- 底部列 ---------- */
+  var statEl, fillEl, saveBtn, msgEl;
+
+  function buildDock() {
+    var dock = el("div", "dock");
+    var w = el("div", "wrap");
+    statEl = el("span", "stat", "");
+    fillEl = el("span", "fill");
+    var bar = el("span", "bar");
+    bar.appendChild(fillEl);
+    msgEl = el("span", "msg");
+    msgEl.hidden = true;
+
+    var copyBtn = el("button", null, "產生文字版");
+    copyBtn.type = "button";
+    copyBtn.addEventListener("click", function () { openSheet(); });
+
+    saveBtn = el("button", "primary", "儲存答案");
+    saveBtn.type = "button";
+    saveBtn.addEventListener("click", saveToArtifact);
+
+    w.appendChild(statEl);
+    w.appendChild(bar);
+    w.appendChild(msgEl);
+    w.appendChild(copyBtn);
+    w.appendChild(saveBtn);
+    dock.appendChild(w);
+    return dock;
+  }
+
+  function refreshStats() {
+    if (!statEl) return;
+    var done = QUESTIONS.filter(qFilled).length;
+    statEl.textContent = "已回答 " + done + " / " + QUESTIONS.length;
+    fillEl.style.width = (QUESTIONS.length ? done / QUESTIONS.length * 100 : 0) + "%";
+  }
+
+  function say(text, kind) {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.className = "msg " + (kind || "ok");
+    msgEl.hidden = false;
+  }
+
+  /* ---------- 文字版 ---------- */
+  function answerText(f) {
+    var a = state[f.k];
+    if (!a) return "";
+    var parts = [];
+    if (f.t === "multi") {
+      (a.v || []).forEach(function (v) { if (v !== OTHER) parts.push(v); });
+      if (a.o && a.o.trim()) parts.push("其他：" + a.o.trim());
+      return parts.join("、");
+    }
+    if (f.t === "single") {
+      if (a.v === OTHER) return a.o && a.o.trim() ? "其他：" + a.o.trim() : "";
+      return a.v || "";
+    }
+    return (a.v || "").trim();
+  }
+
+  function buildText() {
+    var out = ["# HanFace 決策問卷 — 填寫結果", ""];
+    var done = QUESTIONS.filter(qFilled).length;
+    out.push("已回答 " + done + " / " + QUESTIONS.length + " 題");
+    out.push("");
+    ["A", "B", "C", "D"].forEach(function (g) {
+      var list = QUESTIONS.filter(function (q) { return q.g === g; });
+      if (!list.length) return;
+      out.push("## " + GROUPS[g].title);
+      out.push("");
+      list.forEach(function (q) {
+        var lines = [];
+        q.f.forEach(function (f) {
+          var v = answerText(f);
+          if (v) lines.push("  - " + (f.label || "") + "：" + v.replace(/\n/g, "\n    "));
+        });
+        out.push("### " + q.n + ". " + q.q);
+        if (lines.length) out.push(lines.join("\n"));
+        else out.push("  （未填）");
+        out.push("");
+      });
+    });
+    return out.join("\n");
+  }
+
+  var sheetEl, sheetTA;
+
+  function buildSheet() {
+    sheetEl = el("div", "sheet");
+    var inner = el("div", "sheet-inner");
+    var head = el("div", "sheet-head");
+    head.appendChild(el("h3", null, "文字版答案"));
+    var x = el("button", null, "關閉");
+    x.type = "button";
+    x.addEventListener("click", function () { sheetEl.classList.remove("open"); });
+    head.appendChild(x);
+
+    var body = el("div", "sheet-body");
+    body.appendChild(el("p", null, "把下面整段複製起來傳給設計的人就可以了。如果「複製」按鈕沒有反應，請直接在框裡全選複製。"));
+    sheetTA = document.createElement("textarea");
+    sheetTA.readOnly = true;
+    body.appendChild(sheetTA);
+
+    var foot = el("div", "sheet-foot");
+    var copy = el("button", "primary", "複製全部");
+    copy.type = "button";
+    copy.addEventListener("click", function () {
+      sheetTA.focus();
+      sheetTA.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) {}
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(sheetTA.value).then(
+          function () { copy.textContent = "已複製"; },
+          function () { copy.textContent = ok ? "已複製" : "請手動全選複製"; }
+        );
+      } else {
+        copy.textContent = ok ? "已複製" : "請手動全選複製";
+      }
+      setTimeout(function () { copy.textContent = "複製全部"; }, 2600);
+    });
+    foot.appendChild(copy);
+
+    inner.appendChild(head);
+    inner.appendChild(body);
+    inner.appendChild(foot);
+    sheetEl.appendChild(inner);
+    sheetEl.addEventListener("click", function (e) {
+      if (e.target === sheetEl) sheetEl.classList.remove("open");
+    });
+    return sheetEl;
+  }
+
+  function openSheet() {
+    sheetTA.value = buildText();
+    sheetEl.classList.add("open");
+    sheetTA.focus();
+    sheetTA.select();
+  }
+
+  /* ---------- 存回這一頁 ---------- */
+  function esc(s) {
+    return String(s).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+  }
+
+  function buildDoc() {
+    var css = document.getElementById("css").textContent;
+    var app = document.getElementById("app").textContent;
+    var qs = document.getElementById("questions").textContent;
+    var S = "script";
+    return '<!doctype html>\n<html lang="zh-Hant">\n<head>\n' +
+      '<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>HanFace 決策問卷</title>\n' +
+      '<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+      '<link rel="stylesheet" href="' + FONT + '">\n' +
+      '<style id="css">' + css + '</style>\n' +
+      '</head>\n<body>\n<div id="root"></div>\n' +
+      '<' + S + ' type="application/json" id="questions">' + qs + '</' + S + '>\n' +
+      '<' + S + ' type="application/json" id="answers">' + esc(JSON.stringify(state)) + '</' + S + '>\n' +
+      '<' + S + ' id="app">' + app + '</' + S + '>\n' +
+      '</body>\n</html>';
+  }
+
+  var readOnly = false;
+
+  function goReadOnly(reason) {
+    readOnly = true;
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "無法存回頁面";
+    }
+    say(reason || "這個連結是唯讀的，請改用「產生文字版」把答案傳回去。", "warn");
+  }
+
+  function saveToArtifact() {
+    if (readOnly) { openSheet(); return; }
+    saveBtn.disabled = true;
+    saveBtn.textContent = "儲存中…";
+    say("儲存中…", "ok");
+
+    var run = (window.claude && window.claude.use)
+      ? window.claude.use("artifact")
+      : Promise.resolve(null);
+
+    run.then(function (api) {
+      if (!api || !api.publish) {
+        goReadOnly("這個檢視無法存回頁面，請改用「產生文字版」。");
+        openSheet();
+        return;
+      }
+      try { sessionStorage.setItem(LSKEY, JSON.stringify(state)); } catch (e) {}
+      return api.publish(buildDoc()).then(function () {
+        say("已儲存，設計的人現在看得到了", "ok");
+      });
+    }).catch(function (err) {
+      var code = err && err.code ? err.code : "upstream_error";
+      if (code === "conflict") {
+        say("有人同時更新了這一頁，正在重新載入…", "warn");
+        return;
+      }
+      if (code === "not_writer" || code === "not_granted" ||
+          code === "consent_required" || code === "capability_disabled" ||
+          code === "capability_removed" || code === "not_declared") {
+        goReadOnly("這個連結沒有編輯權，請改用「產生文字版」把答案傳回去。");
+        openSheet();
+        return;
+      }
+      if (code === "rate_limited") {
+        say("儲存太頻繁，請等一下再按一次", "warn");
+      } else if (code === "too_large") {
+        say("內容太長，請改用「產生文字版」", "err");
+        openSheet();
+      } else {
+        say("儲存失敗，請改用「產生文字版」", "err");
+        openSheet();
+      }
+    }).then(function () {
+      if (!readOnly && saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "儲存答案";
+      }
+    });
+  }
+
+  render();
+})();
+</script>
