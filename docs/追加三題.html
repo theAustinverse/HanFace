@@ -1,0 +1,401 @@
+<title>HanFace 追加三題</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --ground:#FBF8F7; --surface:#F4EFED; --surface-2:#EDE6E3;
+    --line:#E4DAD6; --line-firm:#CFC0BA;
+    --ink:#241E1D; --ink-2:#433936; --muted:#6E6461; --faint:#746A66;
+    --accent:#8A5347; --accent-soft:#C4A199;
+    --pick-bg:#F0E4E0;
+    --note:#4A6B52; --note-bg:#E4EDE5;
+    --serif:"Newsreader","Iowan Old Style",Palatino,Georgia,serif;
+    --han:"PingFang TC","Hiragino Sans TC","Noto Sans TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#171413; --surface:#1F1A19; --surface-2:#272120;
+      --line:#332B29; --line-firm:#4A3E3B;
+      --ink:#EFE8E5; --ink-2:#D5C9C4; --muted:#9D908B; --faint:#8E827D;
+      --accent:#D9A294; --accent-soft:#7A5146;
+      --pick-bg:#33241F;
+      --note:#9DBFA3; --note-bg:#202B22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#171413; --surface:#1F1A19; --surface-2:#272120;
+    --line:#332B29; --line-firm:#4A3E3B;
+    --ink:#EFE8E5; --ink-2:#D5C9C4; --muted:#9D908B; --faint:#8E827D;
+    --accent:#D9A294; --accent-soft:#7A5146;
+    --pick-bg:#33241F;
+    --note:#9DBFA3; --note-bg:#202B22;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--han);
+       font-size:16px;line-height:1.78;-webkit-font-smoothing:antialiased;
+       font-feature-settings:"palt" 1;padding-bottom:92px}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  h1,h2{margin:0;font-weight:400;text-wrap:balance}
+  p{margin:0}
+  a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+  .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+           text-transform:uppercase;color:var(--faint)}
+
+  header{padding:62px 0 30px}
+  header .wrap{display:flex;flex-direction:column;gap:16px}
+  header h1{font-family:var(--serif);font-size:clamp(30px,5.2vw,46px);line-height:1.14}
+  .lede{color:var(--ink-2);font-size:16.5px}
+  .lede b{color:var(--ink)}
+
+  .qs{display:flex;flex-direction:column;gap:22px;padding:8px 0 10px}
+  .q{border:1px solid var(--line);border-radius:2px;background:var(--surface)}
+  .qhead{padding:20px 22px 16px;border-bottom:1px solid var(--line);
+         display:flex;flex-direction:column;gap:10px}
+  .qtop{display:flex;gap:14px;align-items:baseline}
+  .qn{font-family:var(--serif);font-size:34px;line-height:1;color:var(--accent);
+      font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .qt{font-size:18px;font-weight:600;line-height:1.45}
+  .qwhy{font-size:14px;color:var(--muted);line-height:1.72;padding-left:38px}
+  .qwhy b{color:var(--ink-2)}
+  .qbody{padding:18px 22px 20px;display:flex;flex-direction:column;gap:16px}
+
+  .field{display:flex;flex-direction:column;gap:7px}
+  .flabel{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+  .fhint{font-size:12.5px;color:var(--muted);line-height:1.62}
+
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+       border:1px solid var(--line);border-radius:2px;cursor:pointer;background:var(--ground)}
+  .opt:hover{border-color:var(--line-firm)}
+  .opt.on{border-color:var(--accent);background:var(--pick-bg)}
+  .opt input{appearance:none;width:15px;height:15px;margin:5px 0 0;flex:0 0 auto;
+             border:1.5px solid var(--line-firm);border-radius:50%;background:var(--ground);cursor:pointer}
+  .opt input:checked{border-color:var(--accent);background:var(--accent)}
+  .opt input:checked::after{content:"";display:block;width:5px;height:5px;margin:4px auto;
+             border-radius:50%;background:var(--ground)}
+  .opt span{font-size:14.5px;line-height:1.6}
+
+  input[type=text],textarea{width:100%;font-family:var(--han);font-size:14.5px;line-height:1.7;
+    color:var(--ink);background:var(--ground);border:1px solid var(--line-firm);
+    border-radius:2px;padding:9px 12px}
+  input[type=text]::placeholder,textarea::placeholder{color:var(--faint)}
+  textarea{min-height:92px;resize:vertical}
+  input[type=text]:focus,textarea:focus{border-color:var(--accent);outline:none}
+
+  .note{background:var(--note-bg);color:var(--ink-2);border-radius:2px;
+        padding:12px 15px;font-size:13.5px;line-height:1.72}
+  .note b{color:var(--ink)}
+
+  .extra{margin-top:26px;border:1px dashed var(--line-firm);border-radius:2px;
+         padding:18px 20px;display:flex;flex-direction:column;gap:12px;background:transparent}
+  .extra h2{font-size:16px;font-weight:600}
+  .extra p{font-size:13.5px;color:var(--muted);line-height:1.7}
+
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;
+        background:color-mix(in srgb,var(--ground) 94%,transparent);
+        backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  .dock .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;
+              flex-wrap:wrap;padding-top:12px;padding-bottom:12px}
+  .dock .stat{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  button{font-family:var(--han);font-size:13.5px;border-radius:2px;cursor:pointer;
+         padding:9px 18px;border:1px solid var(--accent);background:var(--accent);
+         color:var(--ground);font-weight:600}
+  button:hover{opacity:.88}
+  button.ghost{background:transparent;color:var(--ink-2);border-color:var(--line-firm);font-weight:400}
+  button.ghost:hover{border-color:var(--accent);color:var(--accent);opacity:1}
+
+  .sheet{position:fixed;inset:0;z-index:60;background:rgb(0 0 0 /.45);
+         display:none;align-items:center;justify-content:center;padding:22px}
+  .sheet.open{display:flex}
+  .si{background:var(--ground);border:1px solid var(--line-firm);border-radius:3px;
+      max-width:620px;width:100%;max-height:84vh;display:flex;flex-direction:column}
+  .sh{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;
+      justify-content:space-between;align-items:center;gap:12px}
+  .sh h2{font-family:var(--serif);font-size:19px}
+  .sb{padding:16px 20px;overflow:auto;display:flex;flex-direction:column;gap:11px}
+  .sb p{font-size:13.5px;color:var(--muted);line-height:1.7}
+  .sb textarea{min-height:280px;font-family:var(--mono);font-size:12px;line-height:1.65}
+  .sf{padding:13px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+
+  footer{padding:34px 0 18px;color:var(--faint);font-size:12.5px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media (max-width:600px){.qwhy{padding-left:0}}
+</style>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">HanFace ／ 追加提問</span>
+    <h1>先問你三件事</h1>
+    <p class="lede">
+      謝謝你填了前面那份，資訊很有用。看完之後有<b>三個地方我需要跟你確認</b>，
+      因為它們會決定網站接下來怎麼寫。其他題可以慢慢來，這三題比較急。
+    </p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="qs">
+
+    <article class="q">
+      <div class="qhead">
+        <div class="qtop"><span class="qn">1</span><span class="qt">那罐杏仁酸，可以拍一張標籤給我嗎？</span></div>
+        <p class="qwhy">
+          你寫的是「醫療級的杏仁酸」。<b>「醫療級」這三個字在化粧品法規裡沒有定義</b>，
+          多數時候它只是包裝上的行銷用語，那樣完全沒問題 —— 只要網站和 IG 不要出現這三個字就好。
+          但我需要確認這罐在法規上算什麼，因為如果它不是化粧品等級，會影響的就不只是文案了。
+        </p>
+      </div>
+      <div class="qbody">
+        <div class="note">
+          <b>最快的方式：直接拍兩張照片傳給我</b> —— 一張正面，一張背面的成分與標示。
+          比你自己找資料快得多，下面的欄位可以不用填。
+        </div>
+        <div class="field">
+          <span class="flabel">產品完整品名與品牌</span>
+          <input type="text" data-k="p_name" placeholder="例如：○○牌 杏仁酸精華 20%">
+        </div>
+        <div class="field">
+          <span class="flabel">化粧品產品登錄編號</span>
+          <span class="fhint">標籤上通常寫成「衛部粧製字第○○號」「粧輸字」，或一組登錄編號。找不到也請告訴我。</span>
+          <input type="text" data-k="p_reg" placeholder="找不到就寫「找不到」">
+        </div>
+        <div class="field">
+          <span class="flabel">濃度與 pH 值（標籤上有寫的話）</span>
+          <input type="text" data-k="p_ph" placeholder="例如：20%，pH 3.5">
+        </div>
+        <div class="field">
+          <span class="flabel">這罐是在哪裡買的？</span>
+          <span class="fhint">一般通路、美材行、代理商，還是國外帶回來的？這會影響它有沒有台灣的登錄。</span>
+          <input type="text" data-k="p_src" placeholder="">
+        </div>
+      </div>
+    </article>
+
+    <article class="q">
+      <div class="qhead">
+        <div class="qtop"><span class="qn">2</span><span class="qt">800 這個價格，是哪一種價？</span></div>
+        <p class="qwhy">
+          你選的定價區間是 <b>1,800–2,800</b>，但服務項目寫的是 <b>60 分鐘 800</b>。
+          這兩個數字差了一倍多，我想確認哪一個才是你要的 —— 因為<b>網站的寫法會完全不同</b>：
+          體驗價要標「限首次」，正式價則要能撐得起整站的質感。
+        </p>
+      </div>
+      <div class="qbody">
+        <div class="field">
+          <span class="flabel">800 是什麼價？</span>
+          <div class="opts" data-radio="price_kind">
+            <label class="opt"><input type="radio" name="price_kind" value="體驗價，只給第一次來的客人"><span>體驗價，只給第一次來的客人</span></label>
+            <label class="opt"><input type="radio" name="price_kind" value="朋友價，目前那 4–5 位的價格"><span>朋友價，目前那 4–5 位的價格</span></label>
+            <label class="opt"><input type="radio" name="price_kind" value="這就是我打算的正式價"><span>這就是我打算的正式價</span></label>
+            <label class="opt"><input type="radio" name="price_kind" value="還沒想清楚"><span>還沒想清楚</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="flabel">每月固定成本大約多少？</span>
+          <span class="fhint">場地、材料、交通、雜支加起來的粗估就好，不用精確。</span>
+          <input type="text" data-k="cost" placeholder="例如：25,000">
+        </div>
+        <div class="field">
+          <span class="flabel">你希望每個月能拿到多少？</span>
+          <span class="fhint">這是「你自己實拿」的數字，不是營業額。</span>
+          <input type="text" data-k="income" placeholder="例如：50,000">
+        </div>
+        <div class="field">
+          <span class="flabel">一週打算做幾天？一天最多接幾位？</span>
+          <input type="text" data-k="capacity" placeholder="例如：一週 4 天，一天 3 位">
+        </div>
+        <div class="note">
+          給你一個參考數字，不是要你漲價：<b>如果一天接 4 位、一週 5 天而且全部滿約</b>，
+          800 的月營收大約是 64,000，扣掉場地與耗材之後大約剩 25,000–29,000。
+          第一年通常不會全滿。你填完上面三格，我可以幫你把這張表算清楚再一起看。
+        </div>
+      </div>
+    </article>
+
+    <article class="q">
+      <div class="qhead">
+        <div class="qtop"><span class="qn">3</span><span class="qt">第一年，你到底會在哪裡服務客人？</span></div>
+        <p class="qwhy">
+          地點那題你寫「想租一日工作室」，空間那題卻勾了「在住家裡」。
+          這是兩種不同的做法，我需要知道是哪一種 —— 因為<b>一日工作室沒辦法登記 Google 地圖</b>，
+          而 Google 地圖對實體店是除了 IG 以外最重要的免費客源。首頁能不能寫地址也看這一題。
+        </p>
+      </div>
+      <div class="qbody">
+        <div class="field">
+          <span class="flabel">第一年的實際做法</span>
+          <div class="opts" data-radio="place">
+            <label class="opt"><input type="radio" name="place" value="租一日工作室，每次去不同的地方"><span>租一日工作室，每次可能不同地方</span></label>
+            <label class="opt"><input type="radio" name="place" value="租一日工作室，但固定同一間"><span>租一日工作室，但固定同一間</span></label>
+            <label class="opt"><input type="radio" name="place" value="在自己住家服務，固定地點"><span>在自己住家服務，固定地點</span></label>
+            <label class="opt"><input type="radio" name="place" value="打算租一個固定的小空間"><span>打算租一個固定的小空間</span></label>
+            <label class="opt"><input type="radio" name="place" value="還沒決定"><span>還沒決定</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="flabel">如果在住家：客人到家裡你自己 OK 嗎？有沒有鄰居或管委會的顧慮？</span>
+          <input type="text" data-k="home_ok" placeholder="">
+        </div>
+        <div class="field">
+          <span class="flabel">如果租一日工作室：大概在哪一區？租金一天多少？</span>
+          <input type="text" data-k="studio" placeholder="例如：江子翠站附近，一天 1,200">
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <section class="extra">
+    <h2>順手的話，還有一件小事（不急）</h2>
+    <p>
+      你說 IG 以前的貼文「有些用詞可能不妥」—— 這個自覺很準，IG 貼文在法規上跟網站一樣算廣告。
+      我做了一個可以自動掃違規詞的工具，你把過去貼文的文字複製貼到下面，我跑一次就知道哪幾則要改。
+      不用整理，直接貼就好，一次貼幾則都可以。
+    </p>
+    <textarea data-k="ig" placeholder="把 IG 貼文的文字貼在這裡，不用排版"></textarea>
+  </section>
+</div>
+
+<footer><div class="wrap">填完按下面的按鈕，複製整段傳回來就可以了。答案會自動存在這台裝置上。</div></footer>
+
+<div class="dock">
+  <div class="wrap">
+    <span class="stat" id="stat"></span>
+    <span style="display:flex;gap:10px">
+      <button type="button" class="ghost" id="clear">清除</button>
+      <button type="button" id="gen">產生答案，複製給我</button>
+    </span>
+  </div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="si">
+    <div class="sh"><h2>複製這一段</h2><button type="button" class="ghost" id="close">關閉</button></div>
+    <div class="sb">
+      <p>整段複製起來，用 IG 或訊息傳回來就好。如果「複製」沒有反應，直接在框裡全選複製。</p>
+      <textarea id="out" readonly></textarea>
+    </div>
+    <div class="sf"><button type="button" id="copy">複製全部</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "hanface-followup-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+
+  var LABELS = {
+    p_name: "產品完整品名與品牌",
+    p_reg: "化粧品產品登錄編號",
+    p_ph: "濃度與 pH 值",
+    p_src: "在哪裡買的",
+    price_kind: "800 是什麼價",
+    cost: "每月固定成本",
+    income: "希望每月實拿",
+    capacity: "一週幾天／一天幾位",
+    place: "第一年的實際做法",
+    home_ok: "住家服務的顧慮",
+    studio: "一日工作室的地區與租金",
+    ig: "IG 過去貼文文字"
+  };
+  var ORDER = ["p_name","p_reg","p_ph","p_src","price_kind","cost","income",
+               "capacity","place","home_ok","studio","ig"];
+  var GROUP = {
+    "問題 1：產品": ["p_name","p_reg","p_ph","p_src"],
+    "問題 2：價格與收支": ["price_kind","cost","income","capacity"],
+    "問題 3：服務地點": ["place","home_ok","studio"],
+    "附加：IG 貼文": ["ig"]
+  };
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  function stat() {
+    var n = ORDER.filter(function (k) {
+      return state[k] && String(state[k]).trim();
+    }).length;
+    document.getElementById("stat").textContent = "已填 " + n + " / " + ORDER.length + " 格";
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-k]"), function (inp) {
+    var k = inp.getAttribute("data-k");
+    if (state[k]) inp.value = state[k];
+    inp.addEventListener("input", function () { state[k] = inp.value; save(); stat(); });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-radio]"), function (box) {
+    var k = box.getAttribute("data-radio");
+    Array.prototype.forEach.call(box.querySelectorAll("input[type=radio]"), function (r) {
+      if (state[k] === r.value) { r.checked = true; r.closest(".opt").classList.add("on"); }
+      r.addEventListener("change", function () {
+        state[k] = r.value; save(); stat();
+        Array.prototype.forEach.call(box.querySelectorAll(".opt"), function (o) {
+          o.classList.remove("on");
+        });
+        r.closest(".opt").classList.add("on");
+      });
+    });
+  });
+
+  function build() {
+    var out = ["# HanFace 追加三題 — 回覆", ""];
+    Object.keys(GROUP).forEach(function (g) {
+      var rows = [];
+      GROUP[g].forEach(function (k) {
+        var v = state[k] && String(state[k]).trim();
+        if (v) rows.push("- " + LABELS[k] + "：" + v.replace(/\n/g, "\n  "));
+      });
+      out.push("## " + g);
+      out.push(rows.length ? rows.join("\n") : "（未填）");
+      out.push("");
+    });
+    return out.join("\n");
+  }
+
+  var sheet = document.getElementById("sheet");
+  var outTA = document.getElementById("out");
+
+  document.getElementById("gen").addEventListener("click", function () {
+    outTA.value = build();
+    sheet.classList.add("open");
+    outTA.focus(); outTA.select();
+  });
+  document.getElementById("close").addEventListener("click", function () {
+    sheet.classList.remove("open");
+  });
+  sheet.addEventListener("click", function (e) {
+    if (e.target === sheet) sheet.classList.remove("open");
+  });
+  document.getElementById("copy").addEventListener("click", function () {
+    var btn = this;
+    outTA.focus(); outTA.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(outTA.value).then(
+        function () { btn.textContent = "已複製"; },
+        function () { btn.textContent = ok ? "已複製" : "請手動全選複製"; }
+      );
+    } else {
+      btn.textContent = ok ? "已複製" : "請手動全選複製";
+    }
+    setTimeout(function () { btn.textContent = "複製全部"; }, 2600);
+  });
+  document.getElementById("clear").addEventListener("click", function () {
+    state = {}; save();
+    Array.prototype.forEach.call(document.querySelectorAll("[data-k]"), function (i) { i.value = ""; });
+    Array.prototype.forEach.call(document.querySelectorAll("input[type=radio]"), function (r) { r.checked = false; });
+    Array.prototype.forEach.call(document.querySelectorAll(".opt"), function (o) { o.classList.remove("on"); });
+    stat();
+  });
+
+  stat();
+})();
+</script>
